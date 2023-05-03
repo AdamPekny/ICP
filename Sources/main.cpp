@@ -7,8 +7,7 @@
 
 #include <QtDebug>
 
-#include "../Headers/pacman.h"
-#include "../Headers/gamestate.h"
+#include "../Headers/level.h"
 
 
 class MainWindow : public QMainWindow {
@@ -65,11 +64,14 @@ int main(int argc, char *argv[]) {
     main_window.resize(800, 600);
     main_window.show();
 
-    GameState *gstate = GameState::get_instance("../Resources/Maps/map_01.src");
+    qDebug() << "Getting scene.";
 
-    QGraphicsScene *scene = gstate->get_map()->generate_scene();
+    Level *level = new Level("../Resources/Maps/map_01.src");
+    QGraphicsScene *scene = level->generate_scene();
 
     main_window.change_scene(scene);
+
+    qDebug() << "Got scene.";
 
     return QApplication::exec();
 }

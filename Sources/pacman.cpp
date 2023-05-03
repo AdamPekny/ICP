@@ -2,12 +2,51 @@
 // Created by adam on 28/04/23.
 //
 
-#include <Qt>
-#include <QTimer>
-#include <QKeyEvent>
+#include <QBrush>
+
 #include "../Headers/pacman.h"
-#include "../Headers/config.h"
-#include "../Headers/ghost.h"
+
+
+Pacman::Pacman(MapVector map_vector) : direction('R'), map_vector(std::move(map_vector)), move_timer(new QTimer()), keys_collected(0) {
+    this->setRect(0, 0, 20, 20);
+    connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
+    connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
+    this->setBrush(QBrush(Qt::yellow));
+    this->move_timer->start(this->timer_speed);
+}
+
+void Pacman::move() {
+    auto current_map = this->map_vector.get_vector();
+    QPoint current_position = {(int) this->pos().x() / 20, (int) this->pos().y() / 20};
+    QPoint new_position = current_position;
+
+    switch (this->direction) {
+        case 'U':
+            new_position = {current_position.x(), current_position.y() - 1};
+            break;
+        case 'D':
+            new_position = {current_position.x(), current_position.y() + 1};
+            break;
+        case 'L':
+            new_position = {current_position.x() - 1, current_position.y()};
+            break;
+        case 'R':
+            new_position = {current_position.x() + 1, current_position.y()};
+            break;
+        default:
+            break;
+    }
+
+    if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
+        this->setPos(new_position.x() * 20, new_position.y() * 20);
+    }
+
+    this->notify_observers();
+}
+
+Pacman::~Pacman() {
+    delete this->move_timer;
+}
 
 void Pacman::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
@@ -32,58 +71,32 @@ void Pacman::keyPressEvent(QKeyEvent *event) {
     }
 }
 
-Pacman::Pacman(size_t x, size_t y) : game_state(GameState::get_instance("")), position({x, y}), direction('R') {
-    this->setRect(x * 20, y * 20, BLOCK_SIZE, BLOCK_SIZE);
-    Pacman::connect(game_state->get_timer(), SIGNAL(timeout()), this, SLOT(move()));
-    this->setBrush(QBrush(Qt::yellow));
+void Pacman::attach_observer(MapObserverObject *observer) {
+    this->observers.append(observer);
 }
 
-void Pacman::move() {
-    std::vector<std::vector<MapCell>> current_map = this->game_state->get_map()->get_map_vector();
-    switch (this->direction) {
-        case 'U':
-            if (current_map[this->position.second - 1][this->position.first].get_type() != MapCell::Wall){
-                this->setPos(this->x(), this->y() - BLOCK_SIZE);
-                this->position.second--;
-            }
-            break;
-        case 'D':
-            if (current_map[this->position.second + 1][this->position.first].get_type() != MapCell::Wall){
-                this->setPos(this->x(), this->y() + BLOCK_SIZE);
-                this->position.second++;
-            }
-            break;
-        case 'L':
-            if (current_map[this->position.second][this->position.first - 1].get_type() != MapCell::Wall){
-                this->setPos(this->x() - BLOCK_SIZE, this->y());
-                this->position.first--;
-            }
-            break;
-        case 'R':
-            if (current_map[this->position.second][this->position.first + 1].get_type() != MapCell::Wall){
-                this->setPos(this->x() + BLOCK_SIZE, this->y());
-                this->position.first++;
-            }
-            break;
-        default:
-            break;
-    }
+void Pacman::detach_observer(MapObserverObject *observer) {
+    this->observers.removeOne(observer);
+}
 
-    QList<QGraphicsItem *> list = collidingItems();
-    for (auto &item : list) {
-        Ghost *ghost = dynamic_cast<Ghost *>(item);
-        if (ghost){
-            this->setBrush(QBrush(Qt::red));
-        }
+void Pacman::notify_observers() {
+    for (MapObserverObject *observer : this->observers) {
+        observer->update();
     }
 }
 
-QRectF Pacman::boundingRect() const {
-    qreal width_portion = this->rect().width() * 0.9;
-    qreal height_portion = this->rect().height() * 0.9;
-    qreal wdiff = (this->rect().width() - width_portion) / 2;
-    qreal hdiff = (this->rect().height() - height_portion) / 2;
-
-    return {this->rect().x() + wdiff, this->rect().y() + hdiff, width_portion, height_portion};
+void Pacman::game_stop() {
+    this->move_timer->stop();
 }
 
+void Pacman::game_start() {
+    this->move_timer->start(this->timer_speed);
+}
+
+void Pacman::handle_game_over(bool win) {
+    this->game_stop();
+}
+
+size_t Pacman::total_key_count() {
+    return this->map_vector.get_key_count();
+}
