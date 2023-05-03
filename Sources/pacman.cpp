@@ -3,6 +3,7 @@
 //
 
 #include <QBrush>
+#include <QtDebug>
 
 #include "../Headers/pacman.h"
 
@@ -11,7 +12,7 @@ Pacman::Pacman(MapVector map_vector) : direction('R'), map_vector(std::move(map_
     this->setRect(0, 0, 20, 20);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
-    this->setBrush(QBrush(Qt::yellow));
+    this->setBrush(QBrush(QImage("./Resources/Textures/pacman-left.png").scaled(20,20)));
     this->move_timer->start(this->timer_speed);
 }
 

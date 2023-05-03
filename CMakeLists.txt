@@ -6,8 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-
-find_package(Qt6 COMPONENTS
+find_package(Qt5 COMPONENTS
         Core
         Gui
         Widgets
@@ -15,8 +14,8 @@ find_package(Qt6 COMPONENTS
 
 add_executable(ICP_pacman Sources/main.cpp Headers/pacman.h Sources/pacman.cpp Headers/level.h Sources/level.cpp Headers/mapvector.h Sources/mapvector.cpp Headers/mapobjects.h Headers/mapobserverobject.h Sources/mapobjects.cpp)
 target_link_libraries(ICP_pacman
-        Qt::Core
-        Qt::Gui
-        Qt::Widgets
+        Qt5::Core
+        Qt5::Gui
+        Qt5::Widgets
         )
 

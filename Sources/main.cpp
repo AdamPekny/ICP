@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 
     qDebug() << "Getting scene.";
 
-    Level *level = new Level("../Resources/Maps/map_01.src");
+    Level *level = new Level("./Resources/Maps/map_01.src");
     QGraphicsScene *scene = level->generate_scene();
 
     main_window.change_scene(scene);
