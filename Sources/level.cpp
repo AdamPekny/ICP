@@ -59,9 +59,9 @@ QGraphicsScene *Level::generate_scene() {
                 default:
                     throw Level::SceneGenerationException();
             }
-            x += 20;
+            x += 32;
         }
-        y += 20;
+        y += 32;
         x = 0;
     }
 
