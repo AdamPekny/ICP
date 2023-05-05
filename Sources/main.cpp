@@ -84,7 +84,6 @@ int main(int argc, char *argv[]) {
 
     main_window.resize(800, 600);
     main_window.show();
-
     main_window.start_game();
 
     return QApplication::exec();

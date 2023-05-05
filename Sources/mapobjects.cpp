@@ -5,13 +5,14 @@
 #include <QDebug>
 #include <QBrush>
 #include <random>
+#include <QtDebug>
 
 #include "../Headers/mapobjects.h"
 
 
 Wall::Wall(QPoint coordinates) {
     this->setRect(coordinates.x(), coordinates.y(), 20, 20);
-    this->setBrush(QBrush(Qt::black));
+    this->setBrush(QBrush(QImage("./Resources/Textures/wall.png").scaled(20,20)));
 }
 
 Path::Path(QPoint coordinates) {
@@ -21,7 +22,7 @@ Path::Path(QPoint coordinates) {
 
 Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false) {
     this->setRect(coordinates.x(), coordinates.y(), 20, 20);
-    this->setBrush(QBrush(Qt::darkGreen));
+    this->setBrush(QBrush(QImage("./Resources/Textures/key.png").scaled(20,20)));
 }
 
 void Key::update() {
@@ -38,7 +39,7 @@ Pacman *Key::get_subject() {
 
 Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
     this->setRect(coordinates.x(), coordinates.y(), 20, 20);
-    this->setBrush(QBrush(Qt::green));
+    this->setBrush(QBrush(QImage("./Resources/Textures/finish.png").scaled(20,20)));
 }
 
 void Target::update() {
@@ -54,7 +55,7 @@ Pacman *Target::get_subject() {
 Ghost::Ghost(QPoint coordinates, Pacman *subject) : subject(subject), direction('R') {
     this->setRect(0, 0, 20, 20);
     this->setPos(coordinates.x(), coordinates.y());
-    this->setBrush(QBrush(Qt::gray));
+    this->setBrush(QBrush(QImage("./Resources/Textures/ghost.png").scaled(20,20)));
 }
 
 void Ghost::update() {

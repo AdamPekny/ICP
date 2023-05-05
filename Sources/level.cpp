@@ -5,6 +5,8 @@
 #include "../Headers/level.h"
 #include "../Headers/mapobjects.h"
 
+#include <QtDebug>
+
 Level::Level(const std::string &file_path) : level_file(file_path), level_scene(nullptr), pacman(nullptr) {
     this->level_vector.load_from_file(file_path);
     connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
