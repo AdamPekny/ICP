@@ -9,10 +9,11 @@
 #include <QTimer>
 #include <QGraphicsRectItem>
 #include <QList>
+#include <QKeyEvent>
+#include <QPropertyAnimation>
 
 #include "mapvector.h"
 #include "mapobserverobject.h"
-#include <QKeyEvent>
 
 
 class Pacman : public QObject, public QGraphicsRectItem {

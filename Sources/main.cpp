@@ -10,6 +10,7 @@
 
 
 #include <QtDebug>
+#include <QFontDatabase>
 
 #include "../Headers/level.h"
 
@@ -63,7 +64,7 @@ private:
     Menu *menu; // Add a member variable for the widget
     Level *level;
 
-    void set_scene_size();
+    void set_view_pos();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -77,25 +78,37 @@ public:
     void start_game();
 };
 
-void MainWindow::set_scene_size() {
-    this->main_view->setFixedSize(this->width(), this->height());
-    this->main_scene->setSceneRect(0, 0, this->main_view->width(), this->main_view->height());
+void MainWindow::set_view_pos() {
+    if (this->level != nullptr){
+        // Calculate the center position of the main window
+        int c_x = this->width() / 2;
+        int c_y = this->height() / 2;
+
+        // Calculate the top-left position of the main_view
+        int new_view_x = c_x - this->main_view->width() / 2;
+        int new_view_y = c_y - this->main_view->height() / 2;
+
+        // Set the position of the main_view
+        this->main_view->move(new_view_x, new_view_y);
+    }
 }
 
 void MainWindow::change_scene(QGraphicsScene *new_scene) {
     this->main_scene->clear();
 
     this->main_view->setScene(new_scene);
-    this->set_scene_size();
 
     delete this->main_scene;
 
     this->main_scene = new_scene;
+    this->main_view->setFixedSize((int) this->main_scene->width(), (int) this->main_scene->height());
+    this->resize((int) this->main_scene->width(), (int) this->main_scene->height());
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
     QWidget::resizeEvent(event);
-    this->set_scene_size();
+
+    this->set_view_pos();
 }
 
 
@@ -104,14 +117,8 @@ void MainWindow::on_play_clicked() {
     this->menu = nullptr;
     this->setCentralWidget(nullptr);
 
-    Level *level = new Level("./Resources/Maps/map_01.src");
-    QGraphicsScene *scene = level->generate_scene();
+    this->start_game();
 
-    // Change the scene displayed in the main window
-    this->change_scene(scene);
-
-    // Debug output
-    qDebug() << "Got scene.";
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(nullptr){
@@ -156,5 +163,6 @@ int main(int argc, char *argv[]) {
 
     main_window.resize(800, 600);
     main_window.show();
+
     return QApplication::exec();
 }
