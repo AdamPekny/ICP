@@ -13,7 +13,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(ICP_pacman Sources/main.cpp Headers/pacman.h Sources/pacman.cpp Headers/level.h Sources/level.cpp Headers/mapvector.h Sources/mapvector.cpp Headers/mapobjects.h Headers/mapobserverobject.h Sources/mapobjects.cpp)
+add_executable(ICP_pacman Sources/main.cpp Headers/pacman.h Sources/pacman.cpp Headers/level.h Sources/level.cpp Headers/mapvector.h Sources/mapvector.cpp Headers/mapobjects.h Headers/mapobserverobject.h Sources/mapobjects.cpp Headers/pathfinder.h Sources/pathfinder.cpp)
 target_link_libraries(ICP_pacman
         Qt::Core
         Qt::Gui

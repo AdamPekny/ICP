@@ -64,7 +64,7 @@ void MapVector::load_from_file(const std::string& file_path) {
     s_map_file.close();
 }
 
-std::vector<std::vector<MapVector::MapObjectType>> MapVector::get_vector() {
+std::vector<std::vector<MapVector::MapObjectType>> MapVector::get_vector() const {
     return this->map_vector;
 }
 

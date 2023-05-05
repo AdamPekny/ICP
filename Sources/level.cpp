@@ -7,11 +7,12 @@
 
 Level::Level(const std::string &file_path) : level_file(file_path), level_scene(nullptr), pacman(nullptr) {
     this->level_vector.load_from_file(file_path);
-    qDebug() << "Constructed level.";
+    connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
 }
 
 Level::~Level() {
     delete this->level_scene;
+    disconnect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
 }
 
 QGraphicsScene *Level::generate_scene() {
@@ -64,8 +65,6 @@ QGraphicsScene *Level::generate_scene() {
     }
 
     pacman->setPos(start_pos.x(), start_pos.y());
-    pacman->setFlag(QGraphicsItem::ItemIsFocusable);
-    pacman->setFocus();
 
     scene->addItem(this->pacman);
 
@@ -74,5 +73,27 @@ QGraphicsScene *Level::generate_scene() {
         pacman->attach_observer(ghost);
         scene->addItem(ghost);
     }
+
     return scene;
+}
+
+void Level::handle_key_press(QKeyEvent *event) {
+    switch (event->key()) {
+        case Qt::Key_W:
+        case Qt::Key_Up:
+        case Qt::Key_A:
+        case Qt::Key_Left:
+        case Qt::Key_S:
+        case Qt::Key_Down:
+        case Qt::Key_D:
+        case Qt::Key_Right:
+            this->pacman->change_direction(event);
+            break;
+        default:
+            break;
+    }
+}
+
+void Level::handle_game_over(bool win) {
+    
 }
