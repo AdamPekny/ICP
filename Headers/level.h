@@ -34,6 +34,7 @@ private:
     QGraphicsScene *level_scene;
     Pacman *pacman;
 
+    void fill_scene(QGraphicsScene *scene);
     void restart_level();
 };
 
