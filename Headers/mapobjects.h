@@ -48,6 +48,8 @@ public:
     Pacman *get_subject();
 private:
     Pacman *subject;
+    char direction;
+    void change_direction_random(QPoint position, const MapVector& map);
 };
 
 #endif //ICP_PACMAN_MAPOBJECTS_H

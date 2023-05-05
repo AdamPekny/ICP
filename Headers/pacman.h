@@ -22,13 +22,16 @@ public:
 
     explicit Pacman(MapVector map_vector);
     ~Pacman() override;
-    void keyPressEvent(QKeyEvent *event) override;
+    QRectF boundingRect() const override;
 
     void attach_observer(MapObserverObject *observer);
     void detach_observer(MapObserverObject *observer);
     void notify_observers();
 
     size_t total_key_count();
+    MapVector get_map_vector();
+
+    void change_direction(QKeyEvent *event);
 
     void game_stop();
     void game_start();
@@ -46,6 +49,7 @@ private:
     char direction;
     QTimer *move_timer;
     QList<MapObserverObject *> observers;
+    bool game_ended;
 };
 
 #endif //ICP_PACMAN_PACMAN_H
