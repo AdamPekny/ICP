@@ -8,21 +8,22 @@
 #include <QtDebug>
 
 #include "../Headers/mapobjects.h"
+#include "../Headers/config.h"
 
 
 Wall::Wall(QPoint coordinates) {
-    this->setRect(coordinates.x(), coordinates.y(), 20, 20);
-    this->setBrush(QBrush(QImage("./Resources/Textures/wall.png").scaled(20,20)));
+    this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
+    this->setBrush(QBrush(QImage("../Resources/Textures/wall.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 Path::Path(QPoint coordinates) {
-    this->setRect(coordinates.x(), coordinates.y(), 20, 20);
+    this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
     this->setBrush(QBrush(Qt::white));
 }
 
 Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false) {
-    this->setRect(coordinates.x(), coordinates.y(), 20, 20);
-    this->setBrush(QBrush(QImage("./Resources/Textures/key.png").scaled(20,20)));
+    this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
+    this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 void Key::update() {
@@ -38,8 +39,8 @@ Pacman *Key::get_subject() {
 }
 
 Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
-    this->setRect(coordinates.x(), coordinates.y(), 20, 20);
-    this->setBrush(QBrush(QImage("./Resources/Textures/finish.png").scaled(20,20)));
+    this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
+    this->setBrush(QBrush(QImage("../Resources/Textures/finish.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 void Target::update() {
@@ -53,9 +54,9 @@ Pacman *Target::get_subject() {
 }
 
 Ghost::Ghost(QPoint coordinates, Pacman *subject) : subject(subject), direction('R') {
-    this->setRect(0, 0, 20, 20);
+    this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
-    this->setBrush(QBrush(QImage("./Resources/Textures/ghost.png").scaled(20,20)));
+    this->setBrush(QBrush(QImage("../Resources/Textures/ghost.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 void Ghost::update() {
@@ -65,7 +66,7 @@ void Ghost::update() {
     }
 
     auto current_map = this->subject->get_map_vector().get_vector();
-    QPoint current_position = {(int) this->mapToScene(this->rect()).boundingRect().topLeft().x() / 20, (int) this->mapToScene(this->rect()).boundingRect().topLeft().y() / 20};
+    QPoint current_position = {(int) this->mapToScene(this->rect()).boundingRect().topLeft().x() / CELL_SIZE, (int) this->mapToScene(this->rect()).boundingRect().topLeft().y() / CELL_SIZE};
     QPoint new_position = current_position;
 
     switch (this->direction) {
@@ -86,7 +87,7 @@ void Ghost::update() {
     }
 
     if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
-        this->setPos(new_position.x() * 20, new_position.y() * 20);
+        this->setPos(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE);
 
         std::random_device random_device;
         std::mt19937 gen(random_device());
@@ -109,21 +110,21 @@ void Ghost::update() {
 
     /*
      ASTAR USAGE
-    QPoint current_position = {(int) this->mapToScene(this->rect()).boundingRect().topLeft().x() / 20, (int) this->mapToScene(this->rect()).boundingRect().topLeft().y() / 20};
-    QPoint current_pacman_position = {(int) this->subject->pos().x() / 20, (int) this->subject->pos().y() / 20};
+    QPoint current_position = {(int) this->mapToScene(this->rect()).boundingRect().topLeft().x() / CELL_SIZE, (int) this->mapToScene(this->rect()).boundingRect().topLeft().y() / CELL_SIZE};
+    QPoint current_pacman_position = {(int) this->subject->pos().x() / CELL_SIZE, (int) this->subject->pos().y() / CELL_SIZE};
     char next_direction = PathFinder().get_next_direction(current_position, current_pacman_position, this->subject->get_map_vector());
     switch (next_direction) {
         case 'U':
-            this->setPos(this->pos().x(), this->pos().y() - 20);
+            this->setPos(this->pos().x(), this->pos().y() - CELL_SIZE);
             break;
         case 'D':
-            this->setPos(this->pos().x(), this->pos().y() + 20);
+            this->setPos(this->pos().x(), this->pos().y() + CELL_SIZE);
             break;
         case 'R':
-            this->setPos(this->pos().x() + 20, this->pos().y());
+            this->setPos(this->pos().x() + CELL_SIZE, this->pos().y());
             break;
         case 'L':
-            this->setPos(this->pos().x() - 20, this->pos().y());
+            this->setPos(this->pos().x() - CELL_SIZE, this->pos().y());
             break;
         default:
             break;
