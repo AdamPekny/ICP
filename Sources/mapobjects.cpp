@@ -15,7 +15,7 @@ Wall::Wall(QPoint coordinates) {
 
 Path::Path(QPoint coordinates) {
     this->setRect(coordinates.x(), coordinates.y(), 32, 32);
-    this->setBrush(QBrush(Qt::white));
+    this->setBrush(QBrush(QImage("./Resources/Textures/water.png").scaled(32,32)));
 }
 
 Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false) {
@@ -26,7 +26,7 @@ Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(fals
 void Key::update() {
     if (collidesWithItem(this->subject) && !this->collected){
         this->collected = true;
-        this->setBrush(QBrush(Qt::white));
+        this->setBrush(QBrush(QImage("./Resources/Textures/water.png").scaled(32,32)));
         this->subject->keys_collected++;
     }
 }
