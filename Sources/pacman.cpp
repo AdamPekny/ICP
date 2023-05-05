@@ -6,6 +6,7 @@
 #include <QtDebug>
 
 #include "../Headers/pacman.h"
+#include "../Headers/config.h"
 
 
 Pacman::Pacman(MapVector map_vector) :  direction('R'),
@@ -13,15 +14,15 @@ Pacman::Pacman(MapVector map_vector) :  direction('R'),
                                         move_timer(new QTimer()),
                                         keys_collected(0),
                                         game_ended(false) {
-    this->setRect(0, 0, 20, 20);
+    this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
-    this->setBrush(QBrush(QImage("./Resources/Textures/pacman-left.png").scaled(20,20)));
+    this->setBrush(QBrush(QImage("../Resources/Textures/pacman-left.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 void Pacman::move() {
     auto current_map = this->map_vector.get_vector();
-    QPoint current_position = {(int) this->pos().x() / 20, (int) this->pos().y() / 20};
+    QPoint current_position = {(int) this->pos().x() / CELL_SIZE, (int) this->pos().y() / CELL_SIZE};
     QPoint new_position = current_position;
 
     switch (this->direction) {
@@ -42,7 +43,7 @@ void Pacman::move() {
     }
 
     if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
-        this->setPos(new_position.x() * 20, new_position.y() * 20);
+        this->setPos(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE);
     }
 
     this->notify_observers();

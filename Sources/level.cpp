@@ -4,6 +4,7 @@
 
 #include "../Headers/level.h"
 #include "../Headers/mapobjects.h"
+#include "../Headers/config.h"
 
 #include <QtDebug>
 
@@ -60,9 +61,9 @@ QGraphicsScene *Level::generate_scene() {
                 default:
                     throw Level::SceneGenerationException();
             }
-            x += 20;
+            x += CELL_SIZE;
         }
-        y += 20;
+        y += CELL_SIZE;
         x = 0;
     }
 
