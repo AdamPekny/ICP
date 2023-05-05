@@ -24,7 +24,7 @@ public:
 
     static MapVector::MapObjectType char_to_type(char type_label);
     void load_from_file(const std::string& file_path);
-    std::vector<std::vector<MapVector::MapObjectType>> get_vector();
+    std::vector<std::vector<MapVector::MapObjectType>> get_vector() const;
     size_t get_key_count() const;
 
     class OpenFileException : std::exception {};

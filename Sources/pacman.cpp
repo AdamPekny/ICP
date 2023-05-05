@@ -8,12 +8,15 @@
 #include "../Headers/pacman.h"
 
 
-Pacman::Pacman(MapVector map_vector) : direction('R'), map_vector(std::move(map_vector)), move_timer(new QTimer()), keys_collected(0) {
+Pacman::Pacman(MapVector map_vector) :  direction('R'),
+                                        map_vector(std::move(map_vector)),
+                                        move_timer(new QTimer()),
+                                        keys_collected(0),
+                                        game_ended(false) {
     this->setRect(0, 0, 20, 20);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
     this->setBrush(QBrush(QImage("./Resources/Textures/pacman-left.png").scaled(20,20)));
-    this->move_timer->start(this->timer_speed);
 }
 
 void Pacman::move() {
@@ -46,30 +49,9 @@ void Pacman::move() {
 }
 
 Pacman::~Pacman() {
+    disconnect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
+    disconnect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
     delete this->move_timer;
-}
-
-void Pacman::keyPressEvent(QKeyEvent *event) {
-    switch (event->key()) {
-        case Qt::Key_W:
-        case Qt::Key_Up:
-            this->direction = 'U';
-            break;
-        case Qt::Key_A:
-        case Qt::Key_Left:
-            this->direction = 'L';
-            break;
-        case Qt::Key_S:
-        case Qt::Key_Down:
-            this->direction = 'D';
-            break;
-        case Qt::Key_D:
-        case Qt::Key_Right:
-            this->direction = 'R';
-            break;
-        default:
-            break;
-    }
 }
 
 void Pacman::attach_observer(MapObserverObject *observer) {
@@ -95,9 +77,50 @@ void Pacman::game_start() {
 }
 
 void Pacman::handle_game_over(bool win) {
+    this->game_ended = true;
     this->game_stop();
 }
 
 size_t Pacman::total_key_count() {
     return this->map_vector.get_key_count();
+}
+
+MapVector Pacman::get_map_vector() {
+    return this->map_vector;
+}
+
+QRectF Pacman::boundingRect() const {
+    qreal width_portion = this->rect().width() * 0.9;
+    qreal height_portion = this->rect().height() * 0.9;
+    qreal wdiff = (this->rect().width() - width_portion) / 2;
+    qreal hdiff = (this->rect().height() - height_portion) / 2;
+
+    return {this->rect().x() + wdiff, this->rect().y() + hdiff, width_portion, height_portion};
+}
+
+void Pacman::change_direction(QKeyEvent *event) {
+    if (!move_timer->isActive() && !this->game_ended){
+        this->game_start();
+    }
+
+    switch (event->key()) {
+        case Qt::Key_W:
+        case Qt::Key_Up:
+            this->direction = 'U';
+            break;
+        case Qt::Key_A:
+        case Qt::Key_Left:
+            this->direction = 'L';
+            break;
+        case Qt::Key_S:
+        case Qt::Key_Down:
+            this->direction = 'D';
+            break;
+        case Qt::Key_D:
+        case Qt::Key_Right:
+            this->direction = 'R';
+            break;
+        default:
+            break;
+    }
 }

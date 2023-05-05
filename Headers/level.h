@@ -19,18 +19,22 @@ public:
     explicit Level(const std::string& file_path);
     ~Level() override;
     QGraphicsScene *generate_scene();
+    void handle_key_press(QKeyEvent *event);
 
     class SceneGenerationException : std::exception {};
 
 signals:
 
 public slots:
+    void handle_game_over(bool win);
 
 private:
     std::string level_file;
     MapVector level_vector;
     QGraphicsScene *level_scene;
     Pacman *pacman;
+
+    void restart_level();
 };
 
 #endif //ICP_PACMAN_LEVEL_H

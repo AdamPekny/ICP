@@ -1,7 +1,6 @@
 #include <QApplication>
 
 #include <QGraphicsScene>
-#include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QMainWindow>
 
@@ -14,6 +13,7 @@ class MainWindow : public QMainWindow {
 private:
     QGraphicsView *main_view;
     QGraphicsScene *main_scene;
+    Level *level;
 
     void set_scene_size();
 
@@ -22,7 +22,10 @@ protected:
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
+    void keyPressEvent(QKeyEvent *event) override;
     void change_scene(QGraphicsScene *new_scene);
+    void start_game();
 };
 
 void MainWindow::set_scene_size() {
@@ -46,7 +49,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     this->set_scene_size();
 }
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(nullptr){
     this->main_view = new QGraphicsView(this);
     this->main_scene = new QGraphicsScene(this);
 
@@ -54,24 +57,34 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     this->main_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
+MainWindow::~MainWindow() {
+    if (this->main_scene) this->main_scene->clear();
+    delete this->main_scene;
+    this->close();
+}
+
+void MainWindow::start_game() {
+    this->level = new Level("../Resources/Maps/map_01.src");
+    QGraphicsScene *scene = level->generate_scene();
+
+    this->change_scene(scene);
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+    if (this->level != nullptr){
+        this->level->handle_key_press(event);
+    }
+}
+
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-
 
     MainWindow main_window(nullptr);
 
     main_window.resize(800, 600);
     main_window.show();
-
-    qDebug() << "Getting scene.";
-
-    Level *level = new Level("./Resources/Maps/map_01.src");
-    QGraphicsScene *scene = level->generate_scene();
-
-    main_window.change_scene(scene);
-
-    qDebug() << "Got scene.";
+    main_window.start_game();
 
     return QApplication::exec();
 }
