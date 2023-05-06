@@ -125,6 +125,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(nullptr){
     this->main_view = new QGraphicsView(this);
     this->main_scene = new QGraphicsScene(this);
 
+    this->main_view->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     this->main_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->main_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     

@@ -10,6 +10,7 @@
 #include <string>
 
 #include "../Headers/mapvector.h"
+#include "../Headers/leveloverlay.h"
 #include "pacman.h"
 
 
@@ -27,15 +28,18 @@ signals:
 
 public slots:
     void handle_game_over(bool win);
+    void restart_level();
+
 
 private:
     std::string level_file;
     MapVector level_vector;
     QGraphicsScene *level_scene;
     Pacman *pacman;
+    bool game_over;
+    LevelOverlay *overlay;
 
     void fill_scene(QGraphicsScene *scene);
-    void restart_level();
 };
 
 #endif //ICP_PACMAN_LEVEL_H
