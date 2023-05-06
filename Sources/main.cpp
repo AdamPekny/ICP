@@ -7,51 +7,17 @@
 #include <QMessageBox>
 #include <QStyle>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QPixmap>
+#include <QFileDialog>
+#include <QString>
 
 
 #include <QtDebug>
 #include <QFontDatabase>
 
 #include "../Headers/level.h"
-
-#include <QWidget>
-#include <QPushButton>
-
-
-/**
- *
- */
-class Menu : public QWidget {
-private:
-public:
-    QPushButton *button1;
-    QPushButton *button2;
-    explicit Menu(QWidget *parent = nullptr);
-private slots:
-    void on_button1_clicked();
-};
-
-Menu::Menu(QWidget *parent) : QWidget(parent) {
-    this->button1 = new QPushButton("Play", this);
-    this->button2 = new QPushButton("Watch replay", this);
-
-    QVBoxLayout *vLayout = new QVBoxLayout;
-    vLayout->addWidget(button1);
-    vLayout->addWidget(button2);
-
-    QHBoxLayout *hLayout = new QHBoxLayout(this);
-    hLayout->addStretch();
-    hLayout->addLayout(vLayout);
-    hLayout->addStretch();
-
-    setLayout(hLayout);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////
-class LevelChoose : public QWidget {
-
-};
+#include "../Headers/widgets.h"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -61,8 +27,9 @@ class MainWindow : public QMainWindow {
 private:
     QGraphicsView *main_view;
     QGraphicsScene *main_scene;
-    Menu *menu; // Add a member variable for the widget
+    Menu *menu;
     Level *level;
+    ControlsWidget *controls_widget;
 
     void set_view_pos();
 
@@ -74,8 +41,13 @@ public:
     ~MainWindow() override;
     void keyPressEvent(QKeyEvent *event) override;
     void change_scene(QGraphicsScene *new_scene);
-    void on_play_clicked();
+    void play();
+    void display_controls_widget();
     void start_game();
+    void back_to_menu();
+    void load_map();
+    void display_menu();
+    void end_game();
 };
 
 void MainWindow::set_view_pos() {
@@ -93,6 +65,14 @@ void MainWindow::set_view_pos() {
     }
 }
 
+void MainWindow::display_menu() {
+    this->menu = new Menu(this);
+    this->setCentralWidget(this->menu);
+    connect(menu->button1, &QPushButton::clicked, this, &MainWindow::play);
+    connect(menu->button2, &QPushButton::clicked, this, &MainWindow::load_map);
+    connect(menu->button4, &QPushButton::clicked, this, &MainWindow::display_controls_widget);
+}
+
 void MainWindow::change_scene(QGraphicsScene *new_scene) {
     this->main_scene->clear();
 
@@ -105,20 +85,33 @@ void MainWindow::change_scene(QGraphicsScene *new_scene) {
     this->resize((int) this->main_scene->width(), (int) this->main_scene->height());
 }
 
+
 void MainWindow::resizeEvent(QResizeEvent *event) {
     QWidget::resizeEvent(event);
-
     this->set_view_pos();
 }
 
 
-void MainWindow::on_play_clicked() {
-    // TODO delete the widget to prevent leaks
-    this->menu = nullptr;
+void MainWindow::play() {
+    delete this->menu;
     this->setCentralWidget(nullptr);
 
     this->start_game();
+}
+void MainWindow::end_game() {
+    delete this->level;
+    this->display_menu();
+}
 
+void MainWindow::display_controls_widget() {
+    delete this->menu;
+    this->controls_widget = new ControlsWidget(this);
+    this->setCentralWidget(this->controls_widget);
+    connect(controls_widget->button_back, &QPushButton::clicked, this, &MainWindow::back_to_menu);
+}
+void MainWindow::back_to_menu() {
+    delete this->controls_widget;
+    this->display_menu();
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(nullptr){
@@ -128,12 +121,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(nullptr){
     this->main_view->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     this->main_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->main_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    // Set background
+    QPixmap background("./Resources/Textures/water.png");
+    QPalette palette;
+    palette.setBrush(QPalette::Background, background);
+    this->setPalette(palette);
     
-    this->menu = new Menu(this); // Create an instance of the widget and add it as a child widget
-    this->setCentralWidget(this->menu); // Set the widget as the central widget
-
-    connect(menu->button1, &QPushButton::clicked, this, &MainWindow::on_play_clicked);
-
+    this->display_menu();
 }
 
 MainWindow::~MainWindow() {
@@ -143,8 +138,23 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::start_game() {
-    this->level = new Level("../Resources/Maps/map_01.src");
+    this->level = new Level("./Resources/Maps/map_01.src");
     QGraphicsScene *scene = level->generate_scene();
+
+    this->change_scene(scene);
+}
+
+void MainWindow::load_map() {
+    QString file_path = QFileDialog::getOpenFileName(this, "Select a map file", "./Resources/Maps", "");
+    if (file_path.isEmpty()) {
+        return;
+    }
+    std::string file_path_str = file_path.toStdString();
+    this->level = new Level(file_path_str);
+    QGraphicsScene *scene = level->generate_scene();
+
+    delete this->menu;
+    this->setCentralWidget(nullptr);
 
     this->change_scene(scene);
 }
