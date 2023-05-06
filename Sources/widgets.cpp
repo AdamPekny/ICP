@@ -1,10 +1,16 @@
 #include "../Headers/widgets.h"
+#include "../Headers/styles.h"
 
 Menu::Menu(QWidget *parent) : QWidget(parent) {
-    this->button1 = new QPushButton("Play default map", this);
+    this->button1 = new QPushButton("Play", this);
     this->button2 = new QPushButton("Load a map", this);
     this->button3 = new QPushButton("Watch replay", this);
     this->button4 = new QPushButton("Controls", this);
+
+    this->button1->setStyleSheet(BUTTON_STYLE);
+    this->button2->setStyleSheet(BUTTON_STYLE);
+    this->button3->setStyleSheet(BUTTON_STYLE);
+    this->button4->setStyleSheet(BUTTON_STYLE);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->addWidget(button1);
@@ -20,14 +26,14 @@ Menu::Menu(QWidget *parent) : QWidget(parent) {
     setLayout(hLayout);
 }
 
+
 ControlsWidget::ControlsWidget(QWidget *parent) : QWidget(parent) {
     this->button_back = new QPushButton("Back to Menu", this);
+    this->button_back->setStyleSheet(BUTTON_STYLE);
 
     // Create a label for the controls heading
     QLabel *label_heading = new QLabel("Controls", this);
-    QFont font_heading;
-    font_heading.setPointSize(20);
-    label_heading->setFont(font_heading);
+    label_heading->setStyleSheet(LABEL_STYLE);
     label_heading->setAlignment(Qt::AlignHCenter);
 
     // Create a list of control actions and their associated keys
@@ -64,4 +70,6 @@ ControlsWidget::ControlsWidget(QWidget *parent) : QWidget(parent) {
     hLayout->addStretch();
 
     setLayout(hLayout);
+
+    setStyleSheet(NORMAL_TEXT_STYLE);
 }

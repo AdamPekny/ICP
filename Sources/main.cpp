@@ -9,9 +9,12 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPixmap>
+#include <QPalette>
 #include <QFileDialog>
 #include <QString>
 #include <QPalette>
+#include <QFontDatabase>
+#include <QApplication>
 
 
 #include <QtDebug>
@@ -148,13 +151,16 @@ void MainWindow::load_map() {
     if (file_path.isEmpty()) {
         return;
     }
-    std::string file_path_str = file_path.toStdString();
-    QGraphicsScene *scene = this->level->load_level(file_path_str);
 
-    delete this->menu;
-    this->setCentralWidget(nullptr);
-
-    this->change_scene(scene);
+    try {
+        std::string file_path_str = file_path.toStdString();
+        QGraphicsScene *scene = this->level->load_level(file_path_str);
+        delete this->menu;
+        this->setCentralWidget(nullptr);
+        this->change_scene(scene);
+    } catch (const MapVector::FileFormatException&) {
+        QMessageBox::critical(this, "Error", "Invalid map file format.");
+    }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -167,6 +173,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+
+    QFontDatabase::addApplicationFont("./Resources/Font/VT323-Regular.ttf"); // Replace path with the path to your font file
 
     MainWindow main_window(nullptr);
 

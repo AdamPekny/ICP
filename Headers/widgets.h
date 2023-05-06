@@ -5,6 +5,8 @@
 #include <QListWidget>
 #include <QLabel>
 
+#include "../Headers/config.h"
+
 class Menu : public QWidget {
 private:
 public:

@@ -33,7 +33,7 @@ Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(fals
 void Key::update() {
     if (collidesWithItem(this->subject) && !this->collected){
         this->collected = true;
-        this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
+        this->setBrush(QBrush(QImage("./Resources/Textures/water.png").scaled(32,32)));
         this->subject->keys_collected++;
     }
 }
