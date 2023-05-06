@@ -12,6 +12,7 @@
 #include <QPalette>
 #include <QFileDialog>
 #include <QString>
+#include <QPalette>
 #include <QFontDatabase>
 #include <QApplication>
 
@@ -46,7 +47,7 @@ public:
     void change_scene(QGraphicsScene *new_scene);
     void play();
     void display_controls_widget();
-    void start_game();
+    void start_game(const std::string& file_path);
     void back_to_menu();
     void load_map();
     void display_menu();
@@ -99,10 +100,9 @@ void MainWindow::play() {
     delete this->menu;
     this->setCentralWidget(nullptr);
 
-    this->start_game();
+    this->start_game("../Resources/Maps/map_01.src");
 }
 void MainWindow::end_game() {
-    delete this->level;
     this->display_menu();
 }
 
@@ -117,19 +117,20 @@ void MainWindow::back_to_menu() {
     this->display_menu();
 }
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(nullptr){
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), level(new Level()){
+    connect(this->level, &Level::exit_level, this, &MainWindow::end_game);
     this->main_view = new QGraphicsView(this);
-    this->main_scene = new QGraphicsScene(this);
+    this->main_scene = new QGraphicsScene(this->main_view);
 
     this->main_view->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     this->main_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->main_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // Set background
-    QPixmap background("./Resources/Textures/water.png");
-    QPalette palette;
-    palette.setBrush(QPalette::Background, background);
-    this->setPalette(palette);
+    //QPixmap background("../Resources/Textures/water.png");
+    //QPalette palette;
+    //palette.setBrush(QPalette::Background, background);
+    //this->setPalette(palette);
     
     this->display_menu();
 }
@@ -140,23 +141,20 @@ MainWindow::~MainWindow() {
     this->close();
 }
 
-void MainWindow::start_game() {
-    this->level = new Level("./Resources/Maps/map_01.src");
-    QGraphicsScene *scene = level->generate_scene();
-
+void MainWindow::start_game(const std::string& file_path) {
+    QGraphicsScene *scene = level->load_level(file_path);
     this->change_scene(scene);
 }
 
 void MainWindow::load_map() {
-    QString file_path = QFileDialog::getOpenFileName(this, "Select a map file", "./Resources/Maps", "");
+    QString file_path = QFileDialog::getOpenFileName(this, "Select a map file", "../Resources/Maps", "");
     if (file_path.isEmpty()) {
         return;
     }
 
     try {
         std::string file_path_str = file_path.toStdString();
-        this->level = new Level(file_path_str);
-        QGraphicsScene *scene = level->generate_scene();
+        QGraphicsScene *scene = this->level->load_level(file_path_str);
         delete this->menu;
         this->setCentralWidget(nullptr);
         this->change_scene(scene);
