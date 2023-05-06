@@ -34,6 +34,7 @@ private:
     Menu *menu;
     Level *level;
     ControlsWidget *controls_widget;
+    SelectMap *select_map;
 
     void set_view_pos();
 
@@ -52,6 +53,7 @@ public:
     void load_map();
     void display_menu();
     void end_game();
+    void display_map_selection();
 };
 
 void MainWindow::set_view_pos() {
@@ -72,7 +74,7 @@ void MainWindow::set_view_pos() {
 void MainWindow::display_menu() {
     this->menu = new Menu(this);
     this->setCentralWidget(this->menu);
-    connect(menu->button1, &QPushButton::clicked, this, &MainWindow::play);
+    connect(menu->button1, &QPushButton::clicked, this, &MainWindow::display_map_selection);
     connect(menu->button2, &QPushButton::clicked, this, &MainWindow::load_map);
     connect(menu->button4, &QPushButton::clicked, this, &MainWindow::display_controls_widget);
 }
@@ -95,11 +97,18 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     this->set_view_pos();
 }
 
+void MainWindow::display_map_selection() {
+    delete this->menu;
+    this->select_map = new SelectMap(this);
+    this->setCentralWidget(this->select_map);
+    connect(select_map->button1, &QPushButton::clicked, this, &MainWindow::play);
+    connect(select_map->button2, &QPushButton::clicked, this, &MainWindow::play);
+    connect(select_map->button3, &QPushButton::clicked, this, &MainWindow::play);
+}
 
 void MainWindow::play() {
-    delete this->menu;
+    delete this->select_map;
     this->setCentralWidget(nullptr);
-
     this->start_game("../Resources/Maps/map_01.src");
 }
 void MainWindow::end_game() {

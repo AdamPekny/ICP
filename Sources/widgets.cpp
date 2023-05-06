@@ -73,3 +73,25 @@ ControlsWidget::ControlsWidget(QWidget *parent) : QWidget(parent) {
 
     setStyleSheet(NORMAL_TEXT_STYLE);
 }
+
+SelectMap::SelectMap(QWidget *parent) : QWidget(parent) {
+    this->button1 = new QPushButton("EASY", this);
+    this->button2 = new QPushButton("MEDIUM", this);
+    this->button3 = new QPushButton("INSANE", this);
+
+    this->button1->setStyleSheet(BUTTON_STYLE);
+    this->button2->setStyleSheet(BUTTON_STYLE);
+    this->button3->setStyleSheet(BUTTON_STYLE);
+
+    QVBoxLayout *vLayout = new QVBoxLayout;
+    vLayout->addWidget(button1);
+    vLayout->addWidget(button2);
+    vLayout->addWidget(button3);
+
+    QHBoxLayout *hLayout = new QHBoxLayout(this);
+    hLayout->addStretch();
+    hLayout->addLayout(vLayout);
+    hLayout->addStretch();
+
+    setLayout(hLayout);
+}
