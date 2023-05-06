@@ -6,13 +6,17 @@
 #define ICP_PACMAN_MAPOBSERVEROBJECT_H
 
 #include <QGraphicsRectItem>
+#include <QObject>
 
-class MapObserverObject : public QGraphicsRectItem {
+#include "../Headers/config.h"
+
+class MapObserverObject : public QObject, public QGraphicsRectItem {
+    Q_OBJECT
 public:
     virtual void update() = 0;
     QRectF boundingRect() const override {
-        qreal width_portion = this->rect().width() * 0.9;
-        qreal height_portion = this->rect().height() * 0.9;
+        qreal width_portion = this->rect().width() * BOUNDING_RECT_FRAC;
+        qreal height_portion = this->rect().height() * BOUNDING_RECT_FRAC;
         qreal wdiff = (this->rect().width() - width_portion) / 2;
         qreal hdiff = (this->rect().height() - height_portion) / 2;
 

@@ -24,9 +24,9 @@ LevelOverlay::LevelOverlay(QGraphicsItem *parent) : QGraphicsRectItem(parent), l
 LevelOverlay::~LevelOverlay() {
     delete this->label;
     delete this->restart_button;
-    delete this->r_btn_proxy;
+    //delete this->r_btn_proxy;
     delete this->exit_button;
-    delete this->e_btn_proxy;
+    //delete this->e_btn_proxy;
 }
 
 void LevelOverlay::set_label(const std::string &text, QColor &color) {
