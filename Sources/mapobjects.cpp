@@ -86,7 +86,8 @@ void Ghost::update() {
             break;
     }
 
-    if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
+    auto next_cell = current_map[new_position.y()][new_position.x()];
+    if (next_cell != MapVector::Wall && next_cell != MapVector::Target){
         this->setPos(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE);
 
         std::random_device random_device;
