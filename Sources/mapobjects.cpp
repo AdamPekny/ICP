@@ -13,23 +13,23 @@
 
 Wall::Wall(QPoint coordinates) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
-    this->setBrush(QBrush(QImage("../Resources/Textures/wall.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/wall.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 Path::Path(QPoint coordinates) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
-    this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/water.png").scaled(32,32)));
 }
 
 Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
-    this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 void Key::update() {
     if (collidesWithItem(this->subject) && !this->collected){
         this->collected = true;
-        this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
+        this->setBrush(QBrush(QImage("./Resources/Textures/water.png").scaled(32,32)));
         this->subject->keys_collected++;
     }
 }
@@ -40,7 +40,7 @@ Pacman *Key::get_subject() {
 
 Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
-    this->setBrush(QBrush(QImage("../Resources/Textures/finish.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/finish.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 void Target::update() {
@@ -56,7 +56,7 @@ Pacman *Target::get_subject() {
 Ghost::Ghost(QPoint coordinates, Pacman *subject) : subject(subject), direction('R') {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
-    this->setBrush(QBrush(QImage("../Resources/Textures/ghost.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/ghost.png").scaled(CELL_SIZE,CELL_SIZE)));
 }
 
 void Ghost::update() {
