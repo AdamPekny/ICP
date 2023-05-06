@@ -6,6 +6,7 @@
 #include <QBrush>
 #include <random>
 #include <QtDebug>
+#include <QPen>
 
 #include "../Headers/mapobjects.h"
 #include "../Headers/config.h"
@@ -14,16 +15,19 @@
 Wall::Wall(QPoint coordinates) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
     this->setBrush(QBrush(QImage("../Resources/Textures/wall.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setPen(Qt::NoPen);
 }
 
 Path::Path(QPoint coordinates) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
     this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setPen(Qt::NoPen);
 }
 
 Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
     this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setPen(Qt::NoPen);
 }
 
 void Key::update() {
@@ -41,6 +45,7 @@ Pacman *Key::get_subject() {
 Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
     this->setBrush(QBrush(QImage("../Resources/Textures/finish.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setPen(Qt::NoPen);
 }
 
 void Target::update() {
@@ -57,14 +62,23 @@ Ghost::Ghost(QPoint coordinates, Pacman *subject) : subject(subject), direction(
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
     this->setBrush(QBrush(QImage("../Resources/Textures/ghost.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setPen(Qt::NoPen);
+    this->move_anim = new QVariantAnimation();
+    this->move_anim->setDuration(100);
+    connect(this->move_anim, &QVariantAnimation::valueChanged, [this](const QVariant &value) {
+        this->setPos(value.toPointF());  // set the new position of rect1
+    });
+
+    connect(this->move_anim, &QVariantAnimation::finished, this, [this]() {
+        if (collidesWithItem(this->subject)){
+            this->move_anim->stop();
+            emit this->subject->game_over(false);
+            return;
+        }
+    });
 }
 
 void Ghost::update() {
-    if (collidesWithItem(this->subject)){
-        emit this->subject->game_over(false);
-        return;
-    }
-
     auto current_map = this->subject->get_map_vector().get_vector();
     QPoint current_position = {(int) this->mapToScene(this->rect()).boundingRect().topLeft().x() / CELL_SIZE, (int) this->mapToScene(this->rect()).boundingRect().topLeft().y() / CELL_SIZE};
     QPoint new_position = current_position;
@@ -88,7 +102,12 @@ void Ghost::update() {
 
     auto next_cell = current_map[new_position.y()][new_position.x()];
     if (next_cell != MapVector::Wall && next_cell != MapVector::Target){
-        this->setPos(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE);
+        this->move_anim->setStartValue(this->pos());
+        this->move_anim->setEndValue(QPointF(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE));
+        if (collidesWithItem(this->subject)){
+            emit this->subject->game_over(false);
+        }
+        this->move_anim->start();
 
         std::random_device random_device;
         std::mt19937 gen(random_device());
@@ -102,11 +121,6 @@ void Ghost::update() {
 
     } else {
         this->change_direction_random(current_position, this->subject->get_map_vector());
-    }
-
-    if (collidesWithItem(this->subject)){
-        emit this->subject->game_over(false);
-        return;
     }
 
     /*

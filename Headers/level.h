@@ -17,19 +17,20 @@
 class Level : public QObject {
     Q_OBJECT
 public:
-    explicit Level(const std::string& file_path);
+    explicit Level();
     ~Level() override;
-    QGraphicsScene *generate_scene();
     void handle_key_press(QKeyEvent *event);
+    QGraphicsScene *load_level(const std::string& file_path);
 
     class SceneGenerationException : std::exception {};
 
 signals:
+    void exit_level();
 
 public slots:
     void handle_game_over(bool win);
     void restart_level();
-
+    void clear_level();
 
 private:
     std::string level_file;
@@ -40,6 +41,7 @@ private:
     LevelOverlay *overlay;
 
     void fill_scene(QGraphicsScene *scene);
+    QGraphicsScene *generate_scene();
 };
 
 #endif //ICP_PACMAN_LEVEL_H

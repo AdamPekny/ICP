@@ -4,6 +4,7 @@
 
 #include <QBrush>
 #include <QtDebug>
+#include <QPen>
 
 #include "../Headers/pacman.h"
 #include "../Headers/config.h"
@@ -18,6 +19,12 @@ Pacman::Pacman(MapVector map_vector) :  direction('R'),
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
     this->setBrush(QBrush(QImage("../Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setPen(Qt::NoPen);
+    this->move_anim = new QVariantAnimation();
+    this->move_anim->setDuration(this->timer_speed - 200);
+    connect(this->move_anim, &QVariantAnimation::valueChanged, [this](const QVariant &value) {
+        this->setPos(value.toPointF());  // set the new position of rect1
+    });
 }
 
 void Pacman::move() {
@@ -43,7 +50,9 @@ void Pacman::move() {
     }
 
     if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
-        this->setPos(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE);
+        this->move_anim->setStartValue(this->pos());
+        this->move_anim->setEndValue(QPointF(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE));
+        this->move_anim->start();
     }
 
     this->notify_observers();
@@ -78,6 +87,7 @@ void Pacman::game_start() {
 }
 
 void Pacman::handle_game_over(bool win) {
+    this->move_anim->stop();
     this->game_ended = true;
     this->game_stop();
 }
@@ -91,8 +101,8 @@ MapVector Pacman::get_map_vector() {
 }
 
 QRectF Pacman::boundingRect() const {
-    qreal width_portion = this->rect().width() * 0.9;
-    qreal height_portion = this->rect().height() * 0.9;
+    qreal width_portion = this->rect().width() * BOUNDING_RECT_FRAC;
+    qreal height_portion = this->rect().height() * BOUNDING_RECT_FRAC;
     qreal wdiff = (this->rect().width() - width_portion) / 2;
     qreal hdiff = (this->rect().height() - height_portion) / 2;
 
@@ -127,5 +137,13 @@ void Pacman::change_direction(QKeyEvent *event) {
             break;
         default:
             break;
+    }
+}
+
+void Pacman::game_toggle() {
+    if (this->move_timer->isActive()){
+        this->move_timer->stop();
+    } else {
+        this->move_timer->start(this->timer_speed);
     }
 }

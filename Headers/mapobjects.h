@@ -5,6 +5,7 @@
 #ifndef ICP_PACMAN_MAPOBJECTS_H
 #define ICP_PACMAN_MAPOBJECTS_H
 
+#include <QVariantAnimation>
 
 #include "mapobserverobject.h"
 #include "pacman.h"
@@ -41,7 +42,7 @@ private:
     Pacman *subject;
 };
 
-class Ghost : public MapObserverObject {
+class Ghost : public MapObserverObject{
 public:
     explicit Ghost(QPoint coordinates, Pacman *subject);
     void update() override;
@@ -50,6 +51,7 @@ private:
     Pacman *subject;
     char direction;
     void change_direction_random(QPoint position, const MapVector& map);
+    QVariantAnimation *move_anim;
 };
 
 #endif //ICP_PACMAN_MAPOBJECTS_H

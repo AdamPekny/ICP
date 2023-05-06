@@ -10,7 +10,7 @@
 #include <QGraphicsRectItem>
 #include <QList>
 #include <QKeyEvent>
-#include <QPropertyAnimation>
+#include <QVariantAnimation>
 
 #include "mapvector.h"
 #include "mapobserverobject.h"
@@ -23,6 +23,7 @@ public:
 
     explicit Pacman(MapVector map_vector);
     ~Pacman() override;
+
     QRectF boundingRect() const override;
 
     void attach_observer(MapObserverObject *observer);
@@ -36,6 +37,7 @@ public:
 
     void game_stop();
     void game_start();
+    void game_toggle();
 
 signals:
     void game_over(bool win);
@@ -45,12 +47,13 @@ public slots:
     void handle_game_over(bool win);
 
 private:
-    const int timer_speed = 250;
+    const int timer_speed = 300;
     MapVector map_vector;
     char direction;
     QTimer *move_timer;
     QList<MapObserverObject *> observers;
     bool game_ended;
+    QVariantAnimation *move_anim;
 };
 
 #endif //ICP_PACMAN_PACMAN_H

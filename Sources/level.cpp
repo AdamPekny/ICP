@@ -13,18 +13,21 @@
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
 
-Level::Level(const std::string &file_path) :    level_file(file_path),
-                                                level_scene(nullptr),
-                                                pacman(nullptr),
-                                                game_over(false) {
-    this->level_vector.load_from_file(file_path);
+Level::Level() :    level_scene(new QGraphicsScene()),
+                    pacman(nullptr),
+                    game_over(false) {
     this->overlay = new LevelOverlay();
     connect(this->overlay->get_restart_btn(), &QPushButton::clicked, this, &Level::restart_level);
+    connect(this->overlay->get_exit_btn(), &QPushButton::clicked, this, [this](){
+        this->clear_level();
+        emit this->exit_level();
+    });
 }
 
 Level::~Level() {
     disconnect();
     delete this->level_scene;
+    delete this->overlay;
 }
 
 QGraphicsScene *Level::generate_scene() {
@@ -45,11 +48,32 @@ void Level::handle_key_press(QKeyEvent *event) {
         case Qt::Key_Down:
         case Qt::Key_D:
         case Qt::Key_Right:
+            if (game_over){
+                return;
+            }
+
             this->pacman->change_direction(event);
             break;
         case Qt::Key_P:
+            if (game_over){
+                return;
+            }
+
+            this->pacman->game_toggle();
+            break;
         case Qt::Key_Escape:
-            this->pacman->game_stop();
+            if (game_over){
+                return;
+            }
+
+            if (this->level_scene->items().contains(this->overlay)){
+                this->level_scene->removeItem(this->overlay);
+                this->pacman->game_start();
+            } else {
+                this->pacman->game_stop();
+                this->overlay->setup_overlay(this->level_scene, "Pause", Qt::white);
+                this->level_scene->addItem(this->overlay);
+            }
             break;
         case Qt::Key_R:
             this->restart_level();
@@ -70,12 +94,8 @@ void Level::handle_game_over(bool win) {
 
 void Level::restart_level() {
     disconnect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
-    if (this->level_scene->items().contains(this->overlay)){
-        this->level_scene->removeItem(this->overlay);
-    }
-    this->level_scene->clear();
+    this->clear_level();
     this->fill_scene(this->level_scene);
-    this->game_over = false;
 }
 
 void Level::fill_scene(QGraphicsScene *scene) {
@@ -135,4 +155,25 @@ void Level::fill_scene(QGraphicsScene *scene) {
         pacman->attach_observer(ghost);
         scene->addItem(ghost);
     }
+}
+
+QGraphicsScene *Level::load_level(const std::string &file_path) {
+    this->clear_level();
+
+    this->level_vector = MapVector();
+    this->level_file = file_path;
+    this->level_vector.load_from_file(file_path);
+
+    return this->generate_scene();
+}
+
+void Level::clear_level() {
+    if (this->level_scene != nullptr){
+        if (this->level_scene->items().contains(this->overlay)){
+            this->level_scene->removeItem(this->overlay);
+        }
+        this->level_scene->clear();
+        this->pacman = nullptr;
+    }
+    this->game_over = false;
 }
