@@ -15,18 +15,22 @@ class Wall : public MapObserverObject {
 public:
     explicit Wall(QPoint coordinates);
     void update(char time_flow) override {};
+    std::string export_state_str() override { return "W"; };
 };
 
 class Path : public MapObserverObject {
 public:
     explicit Path(QPoint coordinates);
     void update(char time_flow) override {};
+    std::string export_state_str() override { return "P"; };
 };
 
 class Key : public MapObserverObject {
 public:
     explicit Key(QPoint coordinates, Pacman *subject);
     void update(char time_flow) override;
+    std::string export_state_str() override;
+    void set_from_state_str(const std::string& state);
     Pacman *get_subject();
 private:
     bool collected;
@@ -38,6 +42,7 @@ class Target : public MapObserverObject {
 public:
     explicit Target(QPoint coordinates, Pacman *subject);
     void update(char time_flow) override;
+    std::string export_state_str() override;
     Pacman *get_subject();
 private:
     Pacman *subject;
@@ -48,6 +53,7 @@ public:
     explicit Ghost(QPoint coordinates, size_t index, Pacman *subject);
     ~Ghost() override;
     void update(char time_flow) override;
+    std::string export_state_str() override;
     Pacman *get_subject();
 private:
     Pacman *subject;

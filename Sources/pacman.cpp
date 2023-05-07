@@ -213,10 +213,15 @@ bool Pacman::is_replay_mode() {
     return this->replay_mode;
 }
 
-std::string Pacman::get_observers_state() {
-    std::string state_str;
+std::vector<std::pair<QPoint, std::string>> Pacman::get_observers_state() {
+    std::vector<std::pair<QPoint, std::string>> state_vector;
     for (MapObserverObject *observer : this->observers) {
-        qDebug() << observer->pos();
+        QPoint observer_pos((int) observer->pos().x(), (int) observer->pos().y());
+        state_vector.emplace_back(observer_pos, observer->export_state_str());
     }
-    return state_str;
+    return state_vector;
+}
+
+void Pacman::set_move_count(size_t count) {
+    this->move_count = count;
 }

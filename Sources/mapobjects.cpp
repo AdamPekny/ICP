@@ -36,14 +36,14 @@ void Key::update(char time_flow) {
         if (collidesWithItem(this->subject) && this->collected && this->collection_move == this->subject->get_move_count()){
             this->collection_move = 0;
             this->collected = false;
-            this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(32,32)));
+            this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
             this->subject->keys_collected--;
         }
     } else {
         if (collidesWithItem(this->subject) && !this->collected){
             this->collection_move = this->subject->get_move_count();
             this->collected = true;
-            this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(32,32)));
+            this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
             this->subject->keys_collected++;
         }
     }
@@ -54,6 +54,29 @@ Pacman *Key::get_subject() {
     return this->subject;
 }
 
+std::string Key::export_state_str() {
+    std::string state_str = "K,";
+
+    state_str += std::to_string((int) this->collected) + "," + std::to_string(this->collection_move);
+
+    return state_str;
+}
+
+void Key::set_from_state_str(const std::string& state) {
+    if (state[0] != 'K'){
+        throw std::exception();
+    }
+    char *endptr = nullptr;
+    this->collected = (bool) std::strtol(state.substr(2, 1).c_str(), &endptr, 10);
+    if (*endptr != '\0') throw std::exception();
+    if (this->collected){
+        this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
+        this->subject->keys_collected++;
+    }
+    this->collection_move = std::strtoul(state.substr(4, state.length() - 4).c_str(), &endptr, 10);
+    if (*endptr != '\0') throw std::exception();
+}
+
 Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
@@ -62,6 +85,7 @@ Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
 }
 
 void Target::update(char time_flow) {
+    if (this->subject->is_replay_mode()) return;
     if (this->subject->keys_collected == this->subject->total_key_count() && collidesWithItem(this->subject)){
         emit this->subject->game_over(true);
     }
@@ -69,6 +93,11 @@ void Target::update(char time_flow) {
 
 Pacman *Target::get_subject() {
     return this->subject;
+}
+
+std::string Target::export_state_str() {
+    std::string state_str = "T";
+    return state_str;
 }
 
 Ghost::Ghost(QPoint coordinates, size_t index, Pacman *subject) : subject(subject), index(index), direction('R') {
@@ -83,7 +112,7 @@ Ghost::Ghost(QPoint coordinates, size_t index, Pacman *subject) : subject(subjec
     });
 
     connect(this->move_anim, &QVariantAnimation::finished, this, [this]() {
-        if (collidesWithItem(this->subject)){
+        if (collidesWithItem(this->subject) && !this->subject->is_replay_mode()){
             this->move_anim->stop();
             emit this->subject->game_over(false);
             return;
@@ -152,7 +181,7 @@ void Ghost::update(char time_flow) {
         }
         this->move_anim->setStartValue(this->pos());
         this->move_anim->setEndValue(QPointF(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE));
-        if (collidesWithItem(this->subject)){
+        if (collidesWithItem(this->subject) && !this->subject->is_replay_mode()){
             emit this->subject->game_over(false);
         }
         this->move_anim->start();
@@ -201,4 +230,12 @@ void Ghost::change_direction_random(QPoint position, const MapVector& map) {
     int rand_idx = dis(gen);
 
     this->direction = possible_directions[rand_idx];
+}
+
+std::string Ghost::export_state_str() {
+    std::string state_str = "G,";
+
+    state_str += std::to_string(this->index);
+
+    return state_str;
 }
