@@ -59,9 +59,10 @@ void Pacman::move() {
 }
 
 Pacman::~Pacman() {
-    disconnect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
-    disconnect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
+    this->move_anim->stop();
+    disconnect();
     delete this->move_timer;
+    delete this->move_anim;
 }
 
 void Pacman::attach_observer(MapObserverObject *observer) {
@@ -118,22 +119,22 @@ void Pacman::change_direction(QKeyEvent *event) {
         case Qt::Key_W:
         case Qt::Key_Up:
             this->direction = 'U';
-            this->setBrush(QBrush(QImage("./Resources/Textures/pacman-top.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-top.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_A:
         case Qt::Key_Left:
             this->direction = 'L';
-            this->setBrush(QBrush(QImage("./Resources/Textures/pacman-left.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-left.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_S:
         case Qt::Key_Down:
             this->direction = 'D';
-            this->setBrush(QBrush(QImage("./Resources/Textures/pacman-bottom.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-bottom.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_D:
         case Qt::Key_Right:
             this->direction = 'R';
-            this->setBrush(QBrush(QImage("./Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         default:
             break;

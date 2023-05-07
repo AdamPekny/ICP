@@ -33,7 +33,7 @@ Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(fals
 void Key::update() {
     if (collidesWithItem(this->subject) && !this->collected){
         this->collected = true;
-        this->setBrush(QBrush(QImage("./Resources/Textures/water.png").scaled(32,32)));
+        this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(32,32)));
         this->subject->keys_collected++;
     }
 }
@@ -76,6 +76,14 @@ Ghost::Ghost(QPoint coordinates, Pacman *subject) : subject(subject), direction(
             return;
         }
     });
+}
+
+Ghost::~Ghost() {
+    this->move_anim->stop();
+
+    disconnect();
+
+    delete this->move_anim;
 }
 
 void Ghost::update() {
@@ -122,33 +130,6 @@ void Ghost::update() {
     } else {
         this->change_direction_random(current_position, this->subject->get_map_vector());
     }
-
-    /*
-     ASTAR USAGE
-    QPoint current_position = {(int) this->mapToScene(this->rect()).boundingRect().topLeft().x() / CELL_SIZE, (int) this->mapToScene(this->rect()).boundingRect().topLeft().y() / CELL_SIZE};
-    QPoint current_pacman_position = {(int) this->subject->pos().x() / CELL_SIZE, (int) this->subject->pos().y() / CELL_SIZE};
-    char next_direction = PathFinder().get_next_direction(current_position, current_pacman_position, this->subject->get_map_vector());
-    switch (next_direction) {
-        case 'U':
-            this->setPos(this->pos().x(), this->pos().y() - CELL_SIZE);
-            break;
-        case 'D':
-            this->setPos(this->pos().x(), this->pos().y() + CELL_SIZE);
-            break;
-        case 'R':
-            this->setPos(this->pos().x() + CELL_SIZE, this->pos().y());
-            break;
-        case 'L':
-            this->setPos(this->pos().x() - CELL_SIZE, this->pos().y());
-            break;
-        default:
-            break;
-    }
-    if (collidesWithItem(this->subject)){
-        emit this->subject->game_over(false);
-        return;
-    }
-     */
 }
 
 Pacman *Ghost::get_subject() {

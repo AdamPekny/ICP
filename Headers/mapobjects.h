@@ -45,6 +45,7 @@ private:
 class Ghost : public MapObserverObject{
 public:
     explicit Ghost(QPoint coordinates, Pacman *subject);
+    ~Ghost() override;
     void update() override;
     Pacman *get_subject();
 private:

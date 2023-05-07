@@ -173,7 +173,7 @@ void MainWindow::load_map() {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-    if (this->level != nullptr){
+    if (this->level->key_handle_ready()){
         this->level->handle_key_press(event);
     }
 }
@@ -183,7 +183,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    QFontDatabase::addApplicationFont("./Resources/Font/VT323-Regular.ttf"); // Replace path with the path to your font file
+    QFontDatabase::addApplicationFont("../Resources/Font/VT323-Regular.ttf"); // Replace path with the path to your font file
 
     MainWindow main_window(nullptr);
 

@@ -19,6 +19,7 @@ class Level : public QObject {
 public:
     explicit Level();
     ~Level() override;
+    bool key_handle_ready();
     void handle_key_press(QKeyEvent *event);
     QGraphicsScene *load_level(const std::string& file_path);
 
