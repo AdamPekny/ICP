@@ -14,7 +14,8 @@ Pacman::Pacman(MapVector map_vector) :  direction('R'),
                                         map_vector(std::move(map_vector)),
                                         move_timer(new QTimer()),
                                         keys_collected(0),
-                                        game_ended(false) {
+                                        game_ended(false),
+                                        move_count(0) {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
@@ -48,6 +49,9 @@ void Pacman::move() {
         default:
             break;
     }
+
+    this->game_moves.push_back({this->direction});
+    this->move_count++;
 
     if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
         this->move_anim->setStartValue(this->pos());
@@ -147,4 +151,16 @@ void Pacman::game_toggle() {
     } else {
         this->move_timer->start(this->timer_speed);
     }
+}
+
+void Pacman::add_ghost_move(size_t ghost_idx, const char ghost_direction) {
+    this->game_moves[this->move_count - 1].push_back(ghost_direction);
+}
+
+std::vector<std::vector<char>> Pacman::get_game_moves() {
+    return this->game_moves;
+}
+
+size_t Pacman::get_move_count() {
+    return this->move_count;
 }

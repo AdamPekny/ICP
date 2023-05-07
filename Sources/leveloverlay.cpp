@@ -16,19 +16,24 @@ LevelOverlay::LevelOverlay(QGraphicsItem *parent) : QGraphicsRectItem(parent), l
     // Set buttons
     this->restart_button = new QPushButton("Restart");
     this->exit_button = new QPushButton("Exit");
+    this->save_button = new QPushButton("Save Replay");
 
     this->restart_button->setStyleSheet(BUTTON_STYLE);
     this->exit_button->setStyleSheet(BUTTON_STYLE);
+    this->save_button->setStyleSheet(BUTTON_STYLE);
 
     this->r_btn_proxy = new QGraphicsProxyWidget(this);
     this->e_btn_proxy = new QGraphicsProxyWidget(this);
+    this->s_btn_proxy = new QGraphicsProxyWidget(this);
 
     this->r_btn_proxy->setWidget(this->restart_button);
     this->e_btn_proxy->setWidget(this->exit_button);
+    this->s_btn_proxy->setWidget(this->save_button);
 
 // Set autoFillBackground to true for proxy widgets
     this->r_btn_proxy->setAutoFillBackground(true);
     this->e_btn_proxy->setAutoFillBackground(true);
+    this->s_btn_proxy->setAutoFillBackground(true);
 }
 
 LevelOverlay::~LevelOverlay() {
@@ -65,8 +70,9 @@ void LevelOverlay::setup_overlay(QGraphicsScene *bottom_scene, const std::string
     opacity_effect->setOpacity(0.8);
     this->background->setGraphicsEffect(opacity_effect);
 
-    this->r_btn_proxy->setPos(center_x - this->r_btn_proxy->rect().width() / 2, center_y - this->r_btn_proxy->rect().height());
-    this->e_btn_proxy->setPos(center_x - this->e_btn_proxy->rect().width() / 2, center_y + this->e_btn_proxy->rect().height());
+    this->r_btn_proxy->setPos(center_x - this->r_btn_proxy->rect().width() / 2, center_y - this->r_btn_proxy->rect().height() - 10);
+    this->e_btn_proxy->setPos(center_x - this->e_btn_proxy->rect().width() / 2, center_y);
+    this->s_btn_proxy->setPos(center_x - this->s_btn_proxy->rect().width() / 2, center_y + this->e_btn_proxy->rect().height() + 10);
     /*
     auto *overlay_anim = new QPropertyAnimation(game_end_overlay->graphicsEffect(), "opacity");
     overlay_anim->setDuration(500);
@@ -91,4 +97,8 @@ QPushButton *LevelOverlay::get_restart_btn() {
 
 QPushButton *LevelOverlay::get_exit_btn() {
     return this->exit_button;
+}
+
+QPushButton *LevelOverlay::get_save_btn() {
+    return this->save_button;
 }

@@ -12,6 +12,8 @@
 #include <QSequentialAnimationGroup>
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
+#include <fstream>
+#include <chrono>
 
 Level::Level() :    level_scene(new QGraphicsScene()),
                     pacman(nullptr),
@@ -21,6 +23,57 @@ Level::Level() :    level_scene(new QGraphicsScene()),
     connect(this->overlay->get_exit_btn(), &QPushButton::clicked, this, [this](){
         this->clear_level();
         emit this->exit_level();
+    });
+    connect(this->overlay->get_save_btn(), &QPushButton::clicked, this, [this](){
+        auto now = std::chrono::system_clock::now();
+        auto time_t_now = std::chrono::system_clock::to_time_t(now);
+        auto time_now = std::localtime(&time_t_now);
+
+        char file_name_datetime[20];
+        std::strftime(file_name_datetime, sizeof(file_name_datetime), "%Y%m%d%H%M%S", time_now);
+        std::string file_name = "replay";
+        file_name = file_name + file_name_datetime + ".log";
+        std::ofstream log_file("../Resources/Replays/" + file_name);
+
+        log_file << this->level_vector.get_dimensions().first << ' ' << this->level_vector.get_dimensions().second << '\n';
+        auto vector = this->level_vector.get_vector();
+        for (auto row_iter = vector.begin() + 1; row_iter != vector.end() - 1; row_iter++){
+            for (auto cell_iter = row_iter->begin() + 1; cell_iter != row_iter->end() - 1; cell_iter++){
+                switch (*cell_iter) {
+                    case MapVector::MapObjectType::Wall:
+                        log_file << 'X';
+                        break;
+                    case MapVector::MapObjectType::Pacman:
+                        log_file << 'S';
+                        break;
+                    case MapVector::MapObjectType::Ghost:
+                        log_file << 'G';
+                        break;
+                    case MapVector::MapObjectType::Path:
+                        log_file << '.';
+                        break;
+                    case MapVector::MapObjectType::Key:
+                        log_file << 'K';
+                        break;
+                    case MapVector::MapObjectType::Target:
+                        log_file << 'T';
+                        break;
+                    default:
+                        break;
+                }
+            }
+            log_file << '\n';
+        }
+
+        log_file << "-\n";
+        auto moves = this->pacman->get_game_moves();
+        qDebug() << moves.size() << moves[0].size();
+        for (auto &row : moves){
+            for (char &c : row) {
+                log_file << c << ' ';
+            }
+            log_file << '\n';
+        }
     });
 }
 
@@ -152,10 +205,12 @@ void Level::fill_scene(QGraphicsScene *scene) {
 
     scene->addItem(this->pacman);
 
+    size_t ghost_index = 1;
     for (auto &ghost_pos : ghosts_pos) {
-        Ghost *ghost = new Ghost(QPoint(ghost_pos.x(), ghost_pos.y()), pacman);
+        Ghost *ghost = new Ghost(QPoint(ghost_pos.x(), ghost_pos.y()), ghost_index, pacman);
         pacman->attach_observer(ghost);
         scene->addItem(ghost);
+        ghost_index++;
     }
 }
 

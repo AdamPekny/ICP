@@ -91,3 +91,7 @@ size_t MapVector::get_key_count() const {
     return this->key_count;
 }
 
+std::pair<size_t, size_t> MapVector::get_dimensions() {
+    return this->dimensions;
+}
+

@@ -32,6 +32,9 @@ public:
 
     size_t total_key_count();
     MapVector get_map_vector();
+    size_t get_move_count();
+    std::vector<std::vector<char>> get_game_moves();
+    void add_ghost_move(size_t ghost_idx, char ghost_direction);
 
     void change_direction(QKeyEvent *event);
 
@@ -48,6 +51,8 @@ public slots:
 
 private:
     const int timer_speed = 300;
+    size_t move_count;
+    std::vector<std::vector<char>> game_moves;
     MapVector map_vector;
     char direction;
     QTimer *move_timer;

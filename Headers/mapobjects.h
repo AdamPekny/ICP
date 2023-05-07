@@ -30,6 +30,7 @@ public:
     Pacman *get_subject();
 private:
     bool collected;
+    size_t collection_move;
     Pacman *subject;
 };
 
@@ -44,12 +45,13 @@ private:
 
 class Ghost : public MapObserverObject{
 public:
-    explicit Ghost(QPoint coordinates, Pacman *subject);
+    explicit Ghost(QPoint coordinates, size_t index, Pacman *subject);
     ~Ghost() override;
     void update() override;
     Pacman *get_subject();
 private:
     Pacman *subject;
+    size_t index;
     char direction;
     void change_direction_random(QPoint position, const MapVector& map);
     QVariantAnimation *move_anim;

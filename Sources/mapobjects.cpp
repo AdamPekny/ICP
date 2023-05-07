@@ -24,7 +24,7 @@ Path::Path(QPoint coordinates) {
     this->setPen(Qt::NoPen);
 }
 
-Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false) {
+Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false), collection_move(0) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
     this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
@@ -32,6 +32,7 @@ Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(fals
 
 void Key::update() {
     if (collidesWithItem(this->subject) && !this->collected){
+        this->collection_move = this->subject->get_move_count();
         this->collected = true;
         this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(32,32)));
         this->subject->keys_collected++;
@@ -58,7 +59,7 @@ Pacman *Target::get_subject() {
     return this->subject;
 }
 
-Ghost::Ghost(QPoint coordinates, Pacman *subject) : subject(subject), direction('R') {
+Ghost::Ghost(QPoint coordinates, size_t index, Pacman *subject) : subject(subject), index(index), direction('R') {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
     this->setBrush(QBrush(QImage("../Resources/Textures/ghost.png").scaled(CELL_SIZE,CELL_SIZE)));
@@ -107,6 +108,7 @@ void Ghost::update() {
         default:
             break;
     }
+    this->subject->add_ghost_move(this->index, this->direction);
 
     auto next_cell = current_map[new_position.y()][new_position.x()];
     if (next_cell != MapVector::Wall && next_cell != MapVector::Target){

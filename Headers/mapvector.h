@@ -26,6 +26,7 @@ public:
     void load_from_file(const std::string& file_path);
     std::vector<std::vector<MapVector::MapObjectType>> get_vector() const;
     size_t get_key_count() const;
+    std::pair<size_t, size_t> get_dimensions();
 
     class OpenFileException : std::exception {};
     class FileFormatException : std::exception {};

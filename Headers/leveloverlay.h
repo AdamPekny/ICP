@@ -22,14 +22,17 @@ public:
     void setup_overlay(QGraphicsScene *bottom_scene, const std::string& label_text, QColor label_color);
     QPushButton *get_restart_btn();
     QPushButton *get_exit_btn();
+    QPushButton *get_save_btn();
 
 private:
     QGraphicsRectItem *background;
     QGraphicsTextItem *label;
     QPushButton *restart_button;
     QPushButton *exit_button;
+    QPushButton *save_button;
     QGraphicsProxyWidget *r_btn_proxy;
     QGraphicsProxyWidget *e_btn_proxy;
+    QGraphicsProxyWidget *s_btn_proxy;
 
     void set_label(const std::string& text, QColor &color);
 };
