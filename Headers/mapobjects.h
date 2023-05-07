@@ -14,19 +14,19 @@
 class Wall : public MapObserverObject {
 public:
     explicit Wall(QPoint coordinates);
-    void update() override {};
+    void update(char time_flow) override {};
 };
 
 class Path : public MapObserverObject {
 public:
     explicit Path(QPoint coordinates);
-    void update() override {};
+    void update(char time_flow) override {};
 };
 
 class Key : public MapObserverObject {
 public:
     explicit Key(QPoint coordinates, Pacman *subject);
-    void update() override;
+    void update(char time_flow) override;
     Pacman *get_subject();
 private:
     bool collected;
@@ -37,7 +37,7 @@ private:
 class Target : public MapObserverObject {
 public:
     explicit Target(QPoint coordinates, Pacman *subject);
-    void update() override;
+    void update(char time_flow) override;
     Pacman *get_subject();
 private:
     Pacman *subject;
@@ -47,7 +47,7 @@ class Ghost : public MapObserverObject{
 public:
     explicit Ghost(QPoint coordinates, size_t index, Pacman *subject);
     ~Ghost() override;
-    void update() override;
+    void update(char time_flow) override;
     Pacman *get_subject();
 private:
     Pacman *subject;

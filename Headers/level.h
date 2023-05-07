@@ -21,7 +21,7 @@ public:
     ~Level() override;
     bool key_handle_ready();
     void handle_key_press(QKeyEvent *event);
-    QGraphicsScene *load_level(const std::string& file_path);
+    QGraphicsScene *load_level(const std::string& file_path, bool replay);
 
     class SceneGenerationException : std::exception {};
 
@@ -33,16 +33,20 @@ public slots:
     void restart_level();
     void clear_level();
 
+
 private:
     std::string level_file;
     MapVector level_vector;
+    std::vector<std::vector<char>> game_moves;
     QGraphicsScene *level_scene;
     Pacman *pacman;
     bool game_over;
     LevelOverlay *overlay;
+    bool replay_mode;
 
     void fill_scene(QGraphicsScene *scene);
     QGraphicsScene *generate_scene();
+    void load_game_moves(std::ifstream& file_stream);
 };
 
 #endif //ICP_PACMAN_LEVEL_H

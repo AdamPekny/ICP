@@ -15,6 +15,7 @@
 #include <QPalette>
 #include <QFontDatabase>
 #include <QApplication>
+#include <functional>
 
 
 #include <QtDebug>
@@ -48,9 +49,9 @@ public:
     void change_scene(QGraphicsScene *new_scene);
     void play();
     void display_controls_widget();
-    void start_game(const std::string& file_path);
+    void start_game(const std::string& file_path, bool replay);
     void back_to_menu();
-    void load_map();
+    void load_map(bool replay);
     void display_menu();
     void end_game();
     void display_map_selection();
@@ -75,7 +76,8 @@ void MainWindow::display_menu() {
     this->menu = new Menu(this);
     this->setCentralWidget(this->menu);
     connect(menu->button1, &QPushButton::clicked, this, &MainWindow::display_map_selection);
-    connect(menu->button2, &QPushButton::clicked, this, &MainWindow::load_map);
+    connect(menu->button2, &QPushButton::clicked, this, [this] { load_map(false); });
+    connect(menu->button3, &QPushButton::clicked, this, [this] { load_map(true); });
     connect(menu->button4, &QPushButton::clicked, this, &MainWindow::display_controls_widget);
 }
 
@@ -109,7 +111,7 @@ void MainWindow::display_map_selection() {
 void MainWindow::play() {
     delete this->select_map;
     this->setCentralWidget(nullptr);
-    this->start_game("../Resources/Maps/map_01.src");
+    this->start_game("../Resources/Maps/map_01.src", false);
 }
 void MainWindow::end_game() {
     this->display_menu();
@@ -150,20 +152,22 @@ MainWindow::~MainWindow() {
     this->close();
 }
 
-void MainWindow::start_game(const std::string& file_path) {
-    QGraphicsScene *scene = level->load_level(file_path);
+void MainWindow::start_game(const std::string& file_path, bool replay) {
+    QGraphicsScene *scene = level->load_level(file_path, replay);
     this->change_scene(scene);
 }
 
-void MainWindow::load_map() {
-    QString file_path = QFileDialog::getOpenFileName(this, "Select a map file", "../Resources/Maps", "");
+void MainWindow::load_map(bool replay) {
+    std::string directory = "../Resources/";
+    directory += (replay ? "Replays" : "Maps");
+    QString file_path = QFileDialog::getOpenFileName(this, "Select a map file", directory.c_str(), "");
     if (file_path.isEmpty()) {
         return;
     }
 
     try {
         std::string file_path_str = file_path.toStdString();
-        QGraphicsScene *scene = this->level->load_level(file_path_str);
+        QGraphicsScene *scene = this->level->load_level(file_path_str, replay);
         delete this->menu;
         this->setCentralWidget(nullptr);
         this->change_scene(scene);

@@ -9,9 +9,7 @@
 #include "../Headers/mapvector.h"
 
 
-void MapVector::load_from_file(const std::string& file_path) {
-    std::ifstream s_map_file;
-    s_map_file.open(file_path);
+void MapVector::load_from_file(std::ifstream& s_map_file) {
     if (!s_map_file.is_open()){
         throw MapVector::OpenFileException();
     }
