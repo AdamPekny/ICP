@@ -88,7 +88,9 @@ void Level::handle_game_over(bool win) {
     }
     this->game_over = true;
 
-    this->overlay->setup_overlay(this->level_scene, "You Win!", Qt::green);
+    std::string game_over_message = win ? "You Win!" : "You Died!";
+    QColor message_color = win ? Qt::green : Qt::red;
+    this->overlay->setup_overlay(this->level_scene, game_over_message, message_color);
     this->level_scene->addItem(this->overlay);
 }
 
@@ -176,4 +178,8 @@ void Level::clear_level() {
         this->pacman = nullptr;
     }
     this->game_over = false;
+}
+
+bool Level::key_handle_ready() {
+    return this->pacman != nullptr;
 }
