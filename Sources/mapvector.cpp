@@ -9,9 +9,7 @@
 #include "../Headers/mapvector.h"
 
 
-void MapVector::load_from_file(const std::string& file_path) {
-    std::ifstream s_map_file;
-    s_map_file.open(file_path);
+void MapVector::load_from_file(std::ifstream& s_map_file) {
     if (!s_map_file.is_open()){
         throw MapVector::OpenFileException();
     }
@@ -89,5 +87,9 @@ MapVector::MapObjectType MapVector::char_to_type(char type_label) {
 
 size_t MapVector::get_key_count() const {
     return this->key_count;
+}
+
+std::pair<size_t, size_t> MapVector::get_dimensions() {
+    return this->dimensions;
 }
 

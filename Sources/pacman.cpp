@@ -10,11 +10,16 @@
 #include "../Headers/config.h"
 
 
-Pacman::Pacman(MapVector map_vector) :  direction('R'),
-                                        map_vector(std::move(map_vector)),
-                                        move_timer(new QTimer()),
-                                        keys_collected(0),
-                                        game_ended(false) {
+Pacman::Pacman(MapVector map_vector, std::vector<std::vector<char>> *moves, bool replay) :
+direction('R'),
+map_vector(std::move(map_vector)),
+move_timer(new QTimer()),
+keys_collected(0),
+game_ended(false),
+move_count(0),
+game_moves(moves),
+replay_mode(replay),
+replay_time_flow('F') {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
@@ -28,6 +33,35 @@ Pacman::Pacman(MapVector map_vector) :  direction('R'),
 }
 
 void Pacman::move() {
+    char time_flow = this->replay_time_flow;
+    qDebug() << "START :" << time_flow;
+    if (this->replay_mode){
+        qDebug() << "P :" << this->move_count;
+        if (this->move_count == this->game_moves->size() && time_flow == 'F') return;
+        if (this->move_count == 0 && time_flow == 'B') return;
+        if (time_flow == 'B'){
+            switch ((*this->game_moves)[this->move_count - 1][0]) {
+                case 'U':
+                    this->direction = 'D';
+                    break;
+                case 'D':
+                    this->direction = 'U';
+                    break;
+                case 'R':
+                    this->direction = 'L';
+                    break;
+                case 'L':
+                    this->direction = 'R';
+                    break;
+                default:
+                    this->direction = 'N';
+                    break;
+            }
+        } else {
+            this->direction = (*this->game_moves)[move_count][0];
+        }
+    }
+
     auto current_map = this->map_vector.get_vector();
     QPoint current_position = {(int) this->pos().x() / CELL_SIZE, (int) this->pos().y() / CELL_SIZE};
     QPoint new_position = current_position;
@@ -50,12 +84,26 @@ void Pacman::move() {
     }
 
     if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
+        if (!this->replay_mode) {
+            this->game_moves->push_back({this->direction});
+        }
         this->move_anim->setStartValue(this->pos());
         this->move_anim->setEndValue(QPointF(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE));
         this->move_anim->start();
+    } else {
+        if (!this->replay_mode) {
+            this->game_moves->push_back({'N'});
+        }
     }
 
-    this->notify_observers();
+    this->notify_observers(time_flow);
+
+    if (time_flow == 'B'){
+        this->move_count--;
+    } else {
+        this->move_count++;
+    }
+    qDebug() << "END :" << time_flow;
 }
 
 Pacman::~Pacman() {
@@ -73,9 +121,9 @@ void Pacman::detach_observer(MapObserverObject *observer) {
     this->observers.removeOne(observer);
 }
 
-void Pacman::notify_observers() {
+void Pacman::notify_observers(char time_flow) {
     for (MapObserverObject *observer : this->observers) {
-        observer->update();
+        observer->update(time_flow);
     }
 }
 
@@ -147,4 +195,28 @@ void Pacman::game_toggle() {
     } else {
         this->move_timer->start(this->timer_speed);
     }
+}
+
+void Pacman::add_ghost_move(size_t ghost_idx, const char ghost_direction) {
+    this->game_moves->back().push_back(ghost_direction);
+}
+
+std::vector<std::vector<char>> *Pacman::get_game_moves() {
+    return this->game_moves;
+}
+
+size_t Pacman::get_move_count() {
+    return this->move_count;
+}
+
+bool Pacman::is_replay_mode() {
+    return this->replay_mode;
+}
+
+std::string Pacman::get_observers_state() {
+    std::string state_str;
+    for (MapObserverObject *observer : this->observers) {
+        qDebug() << observer->pos();
+    }
+    return state_str;
 }

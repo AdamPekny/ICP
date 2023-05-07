@@ -24,18 +24,30 @@ Path::Path(QPoint coordinates) {
     this->setPen(Qt::NoPen);
 }
 
-Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false) {
-    this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
+Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false), collection_move(0) {
+    this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
+    this->setPos(coordinates.x(), coordinates.y());
     this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
 }
 
-void Key::update() {
-    if (collidesWithItem(this->subject) && !this->collected){
-        this->collected = true;
-        this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(32,32)));
-        this->subject->keys_collected++;
+void Key::update(char time_flow) {
+    if (time_flow == 'B'){
+        if (collidesWithItem(this->subject) && this->collected && this->collection_move == this->subject->get_move_count()){
+            this->collection_move = 0;
+            this->collected = false;
+            this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(32,32)));
+            this->subject->keys_collected--;
+        }
+    } else {
+        if (collidesWithItem(this->subject) && !this->collected){
+            this->collection_move = this->subject->get_move_count();
+            this->collected = true;
+            this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(32,32)));
+            this->subject->keys_collected++;
+        }
     }
+
 }
 
 Pacman *Key::get_subject() {
@@ -43,12 +55,13 @@ Pacman *Key::get_subject() {
 }
 
 Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
-    this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
+    this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
+    this->setPos(coordinates.x(), coordinates.y());
     this->setBrush(QBrush(QImage("../Resources/Textures/finish.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
 }
 
-void Target::update() {
+void Target::update(char time_flow) {
     if (this->subject->keys_collected == this->subject->total_key_count() && collidesWithItem(this->subject)){
         emit this->subject->game_over(true);
     }
@@ -58,7 +71,7 @@ Pacman *Target::get_subject() {
     return this->subject;
 }
 
-Ghost::Ghost(QPoint coordinates, Pacman *subject) : subject(subject), direction('R') {
+Ghost::Ghost(QPoint coordinates, size_t index, Pacman *subject) : subject(subject), index(index), direction('R') {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
     this->setBrush(QBrush(QImage("../Resources/Textures/ghost.png").scaled(CELL_SIZE,CELL_SIZE)));
@@ -86,7 +99,31 @@ Ghost::~Ghost() {
     delete this->move_anim;
 }
 
-void Ghost::update() {
+void Ghost::update(char time_flow) {
+    if (this->subject->is_replay_mode()){
+        qDebug() << this->index << ':' << this->subject->get_move_count();
+        if (time_flow == 'B'){
+            switch ((*this->subject->get_game_moves())[this->subject->get_move_count() - 1][this->index]) {
+                case 'U':
+                    this->direction = 'D';
+                    break;
+                case 'D':
+                    this->direction = 'U';
+                    break;
+                case 'R':
+                    this->direction = 'L';
+                    break;
+                case 'L':
+                    this->direction = 'R';
+                    break;
+                default:
+                    this->direction = 'N';
+                    break;
+            }
+        } else {
+            this->direction = (*this->subject->get_game_moves())[this->subject->get_move_count()][this->index];
+        }
+    }
     auto current_map = this->subject->get_map_vector().get_vector();
     QPoint current_position = {(int) this->mapToScene(this->rect()).boundingRect().topLeft().x() / CELL_SIZE, (int) this->mapToScene(this->rect()).boundingRect().topLeft().y() / CELL_SIZE};
     QPoint new_position = current_position;
@@ -110,6 +147,9 @@ void Ghost::update() {
 
     auto next_cell = current_map[new_position.y()][new_position.x()];
     if (next_cell != MapVector::Wall && next_cell != MapVector::Target){
+        if (!this->subject->is_replay_mode()){
+            this->subject->add_ghost_move(this->index, this->direction);
+        }
         this->move_anim->setStartValue(this->pos());
         this->move_anim->setEndValue(QPointF(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE));
         if (collidesWithItem(this->subject)){
@@ -128,6 +168,9 @@ void Ghost::update() {
         }
 
     } else {
+        if (!this->subject->is_replay_mode()){
+            this->subject->add_ghost_move(this->index, 'N');
+        }
         this->change_direction_random(current_position, this->subject->get_map_vector());
     }
 }
