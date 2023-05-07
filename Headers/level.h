@@ -38,6 +38,8 @@ private:
     std::string level_file;
     MapVector level_vector;
     std::vector<std::vector<char>> game_moves;
+    std::vector<std::pair<QPoint, std::string>> observers_end_states;
+    size_t max_moves;
     QGraphicsScene *level_scene;
     Pacman *pacman;
     bool game_over;
@@ -45,6 +47,7 @@ private:
     bool replay_mode;
 
     void fill_scene(QGraphicsScene *scene);
+    void fill_scene_end(QGraphicsScene *scene);
     QGraphicsScene *generate_scene();
     void load_game_moves(std::ifstream& file_stream);
 };

@@ -14,11 +14,13 @@
 #include <QPushButton>
 #include <fstream>
 #include <chrono>
+#include <regex>
 
 Level::Level() :    level_scene(new QGraphicsScene()),
                     pacman(nullptr),
                     game_over(false),
-                    replay_mode(false) {
+                    replay_mode(false),
+                    max_moves(0) {
     this->overlay = new LevelOverlay();
     connect(this->overlay->get_restart_btn(), &QPushButton::clicked, this, &Level::restart_level);
     connect(this->overlay->get_exit_btn(), &QPushButton::clicked, this, [this](){
@@ -37,13 +39,23 @@ Level::Level() :    level_scene(new QGraphicsScene()),
         std::ofstream log_file("../Resources/Replays/" + file_name);
 
         auto moves = this->game_moves;
-        qDebug() << moves.size() << moves[0].size();
         for (auto &row : moves){
             for (char &c : row) {
                 log_file << c << ' ';
             }
             log_file << '\n';
         }
+
+        log_file << "-\n";
+
+
+        auto observers_state = this->pacman->get_observers_state();
+        log_file << observers_state.size() + 1 << '\n';
+        log_file << this->pacman->pos().x() << ',' << this->pacman->pos().y() << ',' << "P," << this->pacman->get_move_count() << ' ';
+        for (auto &state : observers_state) {
+            log_file << state.first.x() << ',' << state.first.y() << ',' << state.second.c_str() << ' ';
+        }
+        log_file << "\n";
 
         log_file << "-\n";
 
@@ -76,11 +88,6 @@ Level::Level() :    level_scene(new QGraphicsScene()),
             }
             log_file << '\n';
         }
-
-        log_file << "-\n";
-
-        log_file << this->pacman->get_move_count() << '\n';
-        log_file << this->pacman->get_observers_state();
     });
 }
 
@@ -138,6 +145,7 @@ void Level::handle_key_press(QKeyEvent *event) {
                 break;
             case Qt::Key_R:
                 this->restart_level();
+                break;
             default:
                 break;
         }
@@ -166,6 +174,9 @@ void Level::handle_key_press(QKeyEvent *event) {
                     this->level_scene->addItem(this->overlay);
                 }
                 break;
+            case Qt::Key_R:
+                this->restart_level();
+                break;
             default:
                 break;
         }
@@ -185,12 +196,17 @@ void Level::handle_game_over(bool win) {
 }
 
 void Level::restart_level() {
+    char time_flow = this->pacman->replay_time_flow;
     disconnect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
     if (!this->replay_mode){
         this->game_moves.clear();
     }
     this->clear_level();
-    this->fill_scene(this->level_scene);
+    if (time_flow == 'B'){
+        this->fill_scene_end(this->level_scene);
+    } else {
+        this->fill_scene(this->level_scene);
+    }
 }
 
 void Level::fill_scene(QGraphicsScene *scene) {
@@ -254,6 +270,80 @@ void Level::fill_scene(QGraphicsScene *scene) {
     }
 }
 
+void Level::fill_scene_end(QGraphicsScene *scene) {
+    this->pacman = new Pacman(this->level_vector, &this->game_moves, this->replay_mode);
+    connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
+
+    int x = 0, y = 0;
+    Target *target = nullptr;
+    Key *key = nullptr;
+
+    for (auto &row : this->level_vector.get_vector()){
+        for (auto &cell : row) {
+            switch (cell) {
+                case MapVector::MapObjectType::Target:
+                    target = new Target(QPoint(x, y), pacman);
+                    pacman->attach_observer(target);
+                    scene->addItem(target);
+                    target = nullptr;
+                    break;
+                case MapVector::MapObjectType::Wall:
+                    scene->addItem(new Wall(QPoint(x, y)));
+                    break;
+                case MapVector::MapObjectType::Key:
+                    key = new Key(QPoint(x, y), pacman);
+                    key->set_from_state_str(
+                        std::find_if(this->observers_end_states.begin(), this->observers_end_states.end(), [x,y](auto &item){
+                            return item.second[0] == 'K' && item.first == QPoint(x, y);
+                        })->second
+                    );
+                    pacman->attach_observer(key);
+                    scene->addItem(key);
+                    key = nullptr;
+                    break;
+                case MapVector::MapObjectType::Path:
+                case MapVector::MapObjectType::Pacman:
+                case MapVector::MapObjectType::Ghost:
+                    scene->addItem(new Path(QPoint(x, y)));
+                    break;
+                default:
+                    throw Level::SceneGenerationException();
+            }
+            x += CELL_SIZE;
+        }
+        y += CELL_SIZE;
+        x = 0;
+    }
+
+    auto pacman_end_state = std::find_if(this->observers_end_states.begin(), this->observers_end_states.end(), [](auto &item){
+        return item.second[0] == 'P';
+    });
+    pacman->setPos(pacman_end_state->first);
+    char *endptr = nullptr;
+    pacman->set_move_count(
+    std::strtoul(pacman_end_state->second.substr(2, pacman_end_state->second.length() - 2).c_str(), &endptr, 10)
+    );
+    if (*endptr != '\0'){
+        throw Level::SceneGenerationException();
+    }
+
+    scene->addItem(this->pacman);
+    pacman->replay_time_flow = 'B';
+
+    for (auto &state : this->observers_end_states) {
+        if (state.second[0] != 'G'){
+            continue;
+        }
+        size_t idx = std::strtoul(state.second.substr(2, state.second.length() - 2).c_str(), &endptr, 10);
+        if (*endptr != '\0'){
+            throw Level::SceneGenerationException();
+        }
+        Ghost *ghost = new Ghost(state.first, idx, pacman);
+        pacman->attach_observer(ghost);
+        scene->addItem(ghost);
+    }
+}
+
 QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
     this->clear_level();
     this->replay_mode = replay;
@@ -266,6 +356,56 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
     }
     if (replay){
         this->load_game_moves(file_stream);
+        std::string line;
+        char *endptr = nullptr;
+        std::getline(file_stream, line);
+        size_t states_count = std::strtoul(line.c_str(), &endptr, 10);
+        if (*endptr != '\0'){
+            throw MapVector::FileFormatException();
+        }
+        while (std::getline(file_stream, line, ' ')){
+            states_count--;
+            QPoint observer_pos;
+            std::string state_info;
+            std::string coordinate;
+            int i = 0, info_start = 0;
+            for (char c : line){
+                if (c == ','){
+                    if (i == 1){
+                        observer_pos.setY((int) std::strtol(coordinate.c_str(), &endptr, 10));
+                        if (*endptr != '\0') {
+                            throw MapVector::FileFormatException();
+                        }
+                        state_info = line.substr(info_start + 2, line.length() - info_start - 2);
+                        qDebug() << state_info.c_str();
+                        break;
+                    }
+                    observer_pos.setX((int) std::strtol(coordinate.c_str(), &endptr, 10));
+                    if (*endptr != '\0') {
+                        throw MapVector::FileFormatException();
+                    }
+                    coordinate.clear();
+                    i++;
+                    continue;
+                }
+                coordinate.push_back(c);
+                info_start++;
+            }
+            this->observers_end_states.emplace_back(observer_pos, state_info);
+            qDebug() << line.c_str();
+            if (states_count == 0){
+                qDebug() << "New line found";
+                break;
+            }
+        }
+        std::getline(file_stream, line);
+        std::getline(file_stream, line);
+        if (line != "-"){
+            qDebug() << line.c_str();
+            throw MapVector::FileFormatException();
+        }
+        qDebug() << "Going to map load!";
+
     }
     this->level_vector.load_from_file(file_stream);
     file_stream.close();

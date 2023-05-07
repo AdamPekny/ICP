@@ -7,6 +7,7 @@
 
 #include <QGraphicsRectItem>
 #include <QObject>
+#include <string>
 
 #include "../Headers/config.h"
 
@@ -14,6 +15,7 @@ class MapObserverObject : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 public:
     virtual void update(char time_flow) = 0;
+    virtual std::string export_state_str() = 0;
     QRectF boundingRect() const override {
         qreal width_portion = this->rect().width() * BOUNDING_RECT_FRAC;
         qreal height_portion = this->rect().height() * BOUNDING_RECT_FRAC;

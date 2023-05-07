@@ -31,11 +31,12 @@ public:
     void detach_observer(MapObserverObject *observer);
     void notify_observers(char time_flow);
 
-    std::string get_observers_state();
+    std::vector<std::pair<QPoint, std::string>> get_observers_state();
 
     size_t total_key_count();
     MapVector get_map_vector();
     size_t get_move_count();
+    void set_move_count(size_t count);
     std::vector<std::vector<char>> *get_game_moves();
     bool is_replay_mode();
 
