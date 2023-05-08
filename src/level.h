@@ -86,7 +86,6 @@ private:
     InfoOverlay *i_overlay;
     bool replay_mode;
     Pacman *pacman;
-    LevelOverlay *overlay;
     MapVector level_vector;
     GameBar *game_bar;
     bool game_started = false;
