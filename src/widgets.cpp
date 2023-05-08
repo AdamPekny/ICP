@@ -1,7 +1,7 @@
 /**
  * @file widgets.cpp
  * @author Samuel Slávik (xslavi37)
- * @brief Declaration of the classes Menu, ControlsWidget and SelectMap
+ * @brief Implementation of the classes Menu, ControlsWidget and SelectMap
  */
 
 #include "widgets.h"
