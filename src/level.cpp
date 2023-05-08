@@ -129,7 +129,9 @@ void Level::handle_key_press(QKeyEvent *event) {
         this->game_started = true;
         this->level_scene->removeItem(this->i_overlay);
         this->pacman->game_start();
+        return;
     }
+
     if (!this->replay_mode){
         switch (event->key()) {
             case Qt::Key_W:
