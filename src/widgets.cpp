@@ -1,22 +1,24 @@
 #include "widgets.h"
-#include "styles.h"
 
 Menu::Menu(QWidget *parent) : QWidget(parent) {
     this->button1 = new QPushButton("Play", this);
     this->button2 = new QPushButton("Load a map", this);
     this->button3 = new QPushButton("Watch replay", this);
     this->button4 = new QPushButton("Controls", this);
+    this->button5 = new QPushButton("Exit", this);
 
     this->button1->setStyleSheet(BUTTON_STYLE);
     this->button2->setStyleSheet(BUTTON_STYLE);
     this->button3->setStyleSheet(BUTTON_STYLE);
     this->button4->setStyleSheet(BUTTON_STYLE);
+    this->button5->setStyleSheet(BUTTON_STYLE);
 
     QVBoxLayout *vLayout = new QVBoxLayout();
     vLayout->addWidget(button1);
     vLayout->addWidget(button2);
     vLayout->addWidget(button3);
     vLayout->addWidget(button4);
+    vLayout->addWidget(button5);
 
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     hLayout->addStretch();

@@ -45,7 +45,7 @@
 
 #define NORMAL_TEXT_STYLE "QLabel { \
                         font-family: 'VT323'; \
-                        font-size: 20px; \
+                        font-size: 30px; \
                     }"
 
 #define BACKGROUND_STYLE "background-image: url(resources/textures/water.png);"

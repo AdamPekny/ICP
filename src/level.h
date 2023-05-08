@@ -13,7 +13,7 @@
 #include "mapvector.h"
 #include "leveloverlay.h"
 #include "pacman.h"
-
+#include "gamebar.h"
 
 class Level : public QWidget {
     Q_OBJECT
@@ -26,11 +26,11 @@ public:
 
     class SceneGenerationException : std::exception {};
 
-signals:
-    void exit_level();
+    signals:
+            void exit_level();
 
 public slots:
-    void handle_game_over(bool win);
+            void handle_game_over(bool win);
     void restart_level();
     void clear_level();
 
@@ -38,7 +38,7 @@ public slots:
 private:
     QGraphicsView *level_view;
     QGraphicsScene *level_scene;
-    QHBoxLayout *layout;
+    QVBoxLayout *layout;
     std::string level_file;
     MapVector level_vector;
     std::vector<std::vector<char>> game_moves;
@@ -47,11 +47,13 @@ private:
     bool game_over;
     LevelOverlay *overlay;
     bool replay_mode;
+    GameBar *game_bar;
 
     void fill_scene(QGraphicsScene *scene);
     void fill_scene_end(QGraphicsScene *scene);
     QGraphicsScene *generate_scene();
     void load_game_moves(std::ifstream& file_stream);
+    void on_pacman_move_over();
 };
 
 #endif //ICP_PACMAN_LEVEL_H
