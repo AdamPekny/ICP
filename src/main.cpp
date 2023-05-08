@@ -110,12 +110,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     connect(controls_widget->button_back, &QPushButton::clicked, this, &MainWindow::display_menu);
 
-    // Set background
-    QPixmap background("resources/textures/water.png");
-    QPalette palette;
-    palette.setBrush(QPalette::Background, background);
-    this->setPalette(palette);
-
     this->setCentralWidget(app_main_widgets);
     this->display_menu();
 }

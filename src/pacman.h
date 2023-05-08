@@ -28,7 +28,7 @@ class Pacman : public QObject, public QGraphicsRectItem {
 public:
     size_t keys_collected; ///< Number of collected keys
     char replay_time_flow; ///< Character representing flow of time in replays (F - forward, B - backward)
-    QPoint position;
+    QPoint position; ///< Next position of pacman.
 
     /**
      * @brief Constructor of pacman class.
@@ -210,9 +210,9 @@ private:
     char direction; ///< Current direction of player.
     QTimer *move_timer; ///< Timer responsible to invoke player movement.
     QList<MapObserverObject *> observers; ///< Total count of moves from the start of game.
-    bool game_ended;
-    bool replay_mode;
-    QVariantAnimation *move_anim;
+    bool game_ended; ///< Flag stating if game ended.
+    bool replay_mode; ///< Flag stating if level is in replay mode.
+    QVariantAnimation *move_anim; ///< Move animation of player
 };
 
 #endif //ICP_PACMAN_PACMAN_H
