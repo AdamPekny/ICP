@@ -1,7 +1,7 @@
 /**
  * @file gamebar.h
  * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
- * @brief Declaration of the class GameBar
+ * @brief Interface of GameBar class that displays count of the moves done and keys collected
  */
 
 #ifndef CMAKE_BUILD_DEBUG_ICP_PACMAN_GAMEBAR_H

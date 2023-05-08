@@ -1,6 +1,8 @@
-//
-// Created by adam on 03/05/23.
-//
+/**
+ * @file mapobjects.cpp
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
+ * @brief Implementation of Wall, Path, Key, Target and Ghost classes that represents the objects in the game
+ */
 
 #include <QBrush>
 #include <random>
@@ -87,6 +89,7 @@ void Target::update(char time_flow) {
     (void) time_flow;
     if (this->subject->is_replay_mode()) return;
     if (this->subject->keys_collected == this->subject->total_key_count() && collidesWithItem(this->subject)){
+        this->subject->game_stop();
         emit this->subject->game_over(true);
     }
 }
