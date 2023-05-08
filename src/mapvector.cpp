@@ -1,8 +1,9 @@
-//
-// Created by adam on 03/05/23.
-//
+/**
+ * @file mapvector.cpp
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
+ * @brief Implementation of MapVector class that stores 2D array representation of the map
+ */
 
-#include "QDebug"
 #include <fstream>
 #include <regex>
 
@@ -40,6 +41,7 @@ void MapVector::load_from_file(std::ifstream& s_map_file) {
         this->map_vector[this->map_vector.size() - 1].emplace_back(MapObjectType::Wall);
     }
 
+    // Parse map from file
     while (std::getline(s_map_file, line)){
         if (line_idx > this->dimensions.first) throw MapVector::FileFormatException();
         this->map_vector[line_idx].emplace_back(MapObjectType::Wall);
