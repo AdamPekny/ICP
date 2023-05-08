@@ -147,6 +147,8 @@ void MainWindow::load_map(bool replay) {
         this->display_level(file_path_str, replay);
     } catch (const MapVector::FileFormatException&) {
         QMessageBox::critical(this, "Error", "Invalid map file format.");
+    } catch (const MapVector::OpenFileException&) {
+        QMessageBox::critical(this, "Error", "Invalid map file format.");
     }
 }
 
