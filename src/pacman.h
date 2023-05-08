@@ -40,7 +40,7 @@ public:
     std::vector<std::vector<char>> *get_game_moves();
     bool is_replay_mode() const;
 
-    void add_ghost_move(size_t ghost_idx, char ghost_direction);
+    void add_ghost_move(char ghost_direction);
 
     void change_direction(QKeyEvent *event);
     void change_texture();
@@ -48,6 +48,7 @@ public:
     void game_stop();
     void game_start();
     void game_toggle();
+    void game_start_if_stopped();
 
 signals:
     void game_over(bool win);

@@ -21,13 +21,13 @@ void MapVector::load_from_file(std::ifstream& s_map_file) {
     if (std::getline(s_map_file, line)){
 
         std::smatch matches;
-        std::regex_search(line, matches, std::regex(R"((\s*\d+))"));
-        if (matches.size() != 2) throw MapVector::FileFormatException();
+        std::regex_search(line, matches, std::regex(R"(^(\d+) (\d+)$)"));
+        if (matches.size() != 3) throw MapVector::FileFormatException();
 
         char *endptr = nullptr;
-        this->dimensions.first = std::strtoul(matches[0].str().c_str(), &endptr, 10);
+        this->dimensions.first = std::strtoul(matches[1].str().c_str(), &endptr, 10);
         if (*endptr != '\0') throw MapVector::FileFormatException();
-        this->dimensions.second = std::strtoul(matches[1].str().c_str(), &endptr, 10);
+        this->dimensions.second = std::strtoul(matches[2].str().c_str(), &endptr, 10);
         if (*endptr != '\0') throw MapVector::FileFormatException();
     } else {
         throw MapVector::FileFormatException();
@@ -58,7 +58,6 @@ void MapVector::load_from_file(std::ifstream& s_map_file) {
         line_idx++;
         col_idx = 0;
     }
-    qDebug() << this->key_count;
     s_map_file.close();
 }
 
@@ -97,5 +96,9 @@ void MapVector::clear() {
     this->map_vector.clear();
     this->dimensions = {0, 0};
     this->key_count = 0;
+}
+
+MapVector::MapVector() : dimensions({0, 0}), key_count(0) {
+
 }
 

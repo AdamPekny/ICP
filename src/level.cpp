@@ -6,10 +6,8 @@
 #include "mapobjects.h"
 #include "config.h"
 
-#include <QtDebug>
 #include <QGraphicsOpacityEffect>
 #include <QLayout>
-#include <QPropertyAnimation>
 #include <QSequentialAnimationGroup>
 #include <QGraphicsProxyWidget>
 #include <QPushButton>
@@ -18,14 +16,16 @@
 #include <regex>
 
 Level::Level(QWidget* parent) :
-                    QWidget(parent),
-                    level_view(new QGraphicsView(this)),
-                    level_scene(new QGraphicsScene(this->level_view)),
-                    pacman(nullptr),
-                    game_over(false),
-                    replay_mode(false),
-                    max_moves(0) {
+QWidget(parent),
+level_view(new QGraphicsView(this)),
+level_scene(new QGraphicsScene(this->level_view)),
+pacman(nullptr),
+game_over(false),
+replay_mode(false) {
     this->level_view->setScene(this->level_scene);
+    this->game_bar = new GameBar();
+    this->level_view->setSceneRect(this->level_scene->itemsBoundingRect());
+    this->level_view->setAlignment(Qt::AlignCenter);
     this->layout = new QHBoxLayout(this);
     this->layout->addWidget(this->level_view);
     this->overlay = new LevelOverlay();
@@ -164,18 +164,19 @@ void Level::handle_key_press(QKeyEvent *event) {
         switch (event->key()) {
             case Qt::Key_Left:
                 this->pacman->replay_time_flow = 'B';
+                this->pacman->game_start_if_stopped();
                 break;
             case Qt::Key_Right:
                 this->pacman->replay_time_flow = 'F';
+                this->pacman->game_start_if_stopped();
                 break;
             case Qt::Key_P:
+                if (this->level_scene->items().contains(this->overlay)){
+                    this->level_scene->removeItem(this->overlay);
+                }
                 this->pacman->game_toggle();
                 break;
             case Qt::Key_Escape:
-                if (game_over){
-                    return;
-                }
-
                 if (this->level_scene->items().contains(this->overlay)){
                     this->level_scene->removeItem(this->overlay);
                     this->pacman->game_start();
@@ -186,6 +187,14 @@ void Level::handle_key_press(QKeyEvent *event) {
                 }
                 break;
             case Qt::Key_R:
+                this->restart_level();
+                break;
+            case Qt::Key_S:
+                this->pacman->replay_time_flow = 'F';
+                this->restart_level();
+                break;
+            case Qt::Key_B:
+                this->pacman->replay_time_flow = 'B';
                 this->restart_level();
                 break;
             default:
@@ -276,6 +285,14 @@ void Level::fill_scene(QGraphicsScene *scene) {
         scene->addItem(ghost);
         ghost_index++;
     }
+
+    this->level_scene->setSceneRect(
+            0,
+            0,
+            (qreal) (this->level_vector.get_dimensions().second + 2) * CELL_SIZE,
+            (qreal) (this->level_vector.get_dimensions().first + 2) * CELL_SIZE
+    );
+    this->level_view->setAlignment(Qt::AlignCenter);
 }
 
 void Level::fill_scene_end(QGraphicsScene *scene) {
@@ -350,6 +367,14 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
         pacman->attach_observer(ghost);
         scene->addItem(ghost);
     }
+
+    this->level_scene->setSceneRect(
+        0,
+        0,
+        (qreal) (this->level_vector.get_dimensions().second + 2) * CELL_SIZE,
+        (qreal) (this->level_vector.get_dimensions().first + 2) * CELL_SIZE
+    );
+    this->level_view->setAlignment(Qt::AlignCenter);
 }
 
 QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
@@ -357,7 +382,6 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
     this->replay_mode = replay;
     this->level_vector.clear();
     this->level_file = file_path;
-    qDebug() << "Attributes set!";
     std::ifstream file_stream;
     file_stream.open(file_path);
     if (!file_stream.is_open()){
@@ -386,7 +410,6 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
                             throw MapVector::FileFormatException();
                         }
                         state_info = line.substr(info_start + 2, line.length() - info_start - 2);
-                        qDebug() << state_info.c_str();
                         break;
                     }
                     observer_pos.setX((int) std::strtol(coordinate.c_str(), &endptr, 10));
@@ -401,26 +424,21 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
                 info_start++;
             }
             this->observers_end_states.emplace_back(observer_pos, state_info);
-            qDebug() << line.c_str();
             if (states_count == 0){
-                qDebug() << "New line found";
                 break;
             }
         }
         std::getline(file_stream, line);
         std::getline(file_stream, line);
         if (line != "-"){
-            qDebug() << line.c_str();
             throw MapVector::FileFormatException();
         }
-        qDebug() << "Going to map load!";
 
     }
-    qDebug() << "Loading map vector!";
+    game_bar->set_moves(0, this->replay_mode ? (int) this->game_moves.size() : 0);
+    game_bar->set_keys_collected(0);
     this->level_vector.load_from_file(file_stream);
     file_stream.close();
-    qDebug() << "Loaded!";
-    qDebug() << "Scene generated!";
     return this->generate_scene();
 }
 

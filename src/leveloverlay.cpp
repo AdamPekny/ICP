@@ -3,10 +3,12 @@
 //
 #include "leveloverlay.h"
 #include "styles.h"
+#include "config.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
 #include <QSequentialAnimationGroup>
+#include <QDebug>
 
 LevelOverlay::LevelOverlay(QGraphicsItem *parent) : QGraphicsRectItem(parent), label(nullptr) {
     // Set background of overlay
@@ -48,7 +50,7 @@ void LevelOverlay::set_label(const std::string &text, QColor &color) {
     delete this->label;
 
     this->label = new QGraphicsTextItem(text.c_str(), this);
-    QFont label_font("VT323", 64);
+    QFont label_font("VT323", 46);
     label_font.setBold(true);
     this->label->setFont(label_font);
     this->label->setDefaultTextColor(color);
@@ -64,7 +66,7 @@ void LevelOverlay::setup_overlay(QGraphicsScene *bottom_scene, const std::string
     qreal center_y = this->rect().width() / 2;
 
     this->set_label(label_text, label_color);
-    this->label->setPos(center_x  - this->label->boundingRect().width() / 2, 5);
+    this->label->setPos(center_x  - this->label->boundingRect().width() / 2, CELL_SIZE);
 
     auto *opacity_effect = new QGraphicsOpacityEffect();
     opacity_effect->setOpacity(0.8);

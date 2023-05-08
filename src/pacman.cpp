@@ -11,15 +11,15 @@
 
 
 Pacman::Pacman(MapVector map_vector, std::vector<std::vector<char>> *moves, bool replay) :
-direction('R'),
-map_vector(std::move(map_vector)),
-move_timer(new QTimer()),
 keys_collected(0),
-game_ended(false),
+replay_time_flow('F'),
 move_count(0),
 game_moves(moves),
-replay_mode(replay),
-replay_time_flow('F') {
+map_vector(std::move(map_vector)),
+direction('R'),
+move_timer(new QTimer()),
+game_ended(false),
+replay_mode(replay) {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
@@ -34,9 +34,7 @@ replay_time_flow('F') {
 
 void Pacman::move() {
     char time_flow = this->replay_time_flow;
-    qDebug() << "START :" << time_flow;
     if (this->replay_mode){
-        qDebug() << "P :" << this->move_count;
         if (this->move_count == this->game_moves->size() && time_flow == 'F') return;
         if (this->move_count == 0 && time_flow == 'B') return;
 
@@ -107,7 +105,8 @@ void Pacman::move() {
     } else {
         this->move_count++;
     }
-    qDebug() << "END :" << time_flow;
+
+    emit this->pacman_move_over();
 }
 
 Pacman::~Pacman() {
@@ -140,6 +139,7 @@ void Pacman::game_start() {
 }
 
 void Pacman::handle_game_over(bool win) {
+    (void) win;
     this->move_anim->stop();
     this->game_ended = true;
     this->game_stop();
@@ -220,7 +220,7 @@ void Pacman::game_toggle() {
     }
 }
 
-void Pacman::add_ghost_move(size_t ghost_idx, const char ghost_direction) {
+void Pacman::add_ghost_move(const char ghost_direction) {
     this->game_moves->back().push_back(ghost_direction);
 }
 
@@ -247,4 +247,10 @@ std::vector<std::pair<QPoint, std::string>> Pacman::get_observers_state() {
 
 void Pacman::set_move_count(size_t count) {
     this->move_count = count;
+}
+
+void Pacman::game_start_if_stopped() {
+    if (!this->move_timer->isActive()) {
+        this->move_timer->start(this->timer_speed);
+    }
 }
