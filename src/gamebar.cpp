@@ -1,6 +1,9 @@
-//
-// Created by adam on 08/05/23.
-//
+/**
+ * @file gamebar.cpp
+ * @author Samuel Slávik (xslavi37)
+ * @brief Implementation of the class GameBar
+ */
+
 #include "gamebar.h"
 
 GameBar::GameBar(QWidget *parent) : QWidget(parent) {
