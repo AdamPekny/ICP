@@ -6,6 +6,7 @@ Make targets:
     make - build project
     make run - build and run project
     make doxygen - generate documentation
+    make pack - zip project
 
 Controls:
     You can view controls when you click on "Controls" button in the main menu of our application.
