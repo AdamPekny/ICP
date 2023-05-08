@@ -32,8 +32,8 @@ public:
     virtual std::string export_state_str() = 0;
 
     /**
-     * @brief
-     * @return Bounding rectangle of the map object
+     * @brief Set the hit box of the map object
+     * @return Hit box of the map object
      */
     QRectF boundingRect() const override {
         qreal width_portion = this->rect().width() * BOUNDING_RECT_FRAC;
