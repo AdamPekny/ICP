@@ -1,7 +1,7 @@
 /**
  * @file widgets.h
- * @author Samuel Slávik (xslavi37)
- * @brief Declaration of the classes Menu, ControlsWidget and SelectMap
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
+ * @brief Interfaces of classes Menu, ControlsWidget and SelectMap that represents the main widgets of the program
  */
 
 #include <QWidget>
@@ -15,7 +15,7 @@
 #include "styles.h"
 
 /**
- * @brief Widget that displays main menu
+ * @brief Widget that represents main menu
  */
 class Menu : public QWidget {
 private:
@@ -34,7 +34,7 @@ public:
 };
 
 /**
- * @brief Widget that displays controls and hotkeys of the gameplay or replay
+ * @brief Widget that represents controls and hotkeys of the gameplay or replay
  */
 class ControlsWidget : public QWidget {
 private:
@@ -50,7 +50,7 @@ private:
 };
 
 /**
- * @brief Widget that displays menu with selection between maps
+ * @brief Widget that represents menu with selection between maps
  */
 class SelectMap : public QWidget {
 private:

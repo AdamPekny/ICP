@@ -1,3 +1,9 @@
+/**
+ * @file styles.h
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
+ * @brief Macros containing qss styles used in the project
+ */
+
 #define BUTTON_STYLE "QPushButton { \
                          background-color: #f0ff00; \
                          color: blue; \

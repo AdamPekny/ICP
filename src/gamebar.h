@@ -1,6 +1,6 @@
 /**
  * @file gamebar.h
- * @author Samuel Slávik (xslavi37)
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
  * @brief Declaration of the class GameBar
  */
 

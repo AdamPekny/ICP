@@ -1,6 +1,8 @@
-//
-// Created by adam on 02/05/23.
-//
+/**
+ * @file level.cpp
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
+ * @brief Implementation of Level class that represents single game/level. One of the main widgets of the program
+ */
 
 #include "level.h"
 #include "mapobjects.h"
@@ -24,18 +26,23 @@ Level::Level(QWidget* parent) :
         game_over(false),
         replay_mode(false) {
     this->level_view->setScene(this->level_scene);
+
+    // Initialize game bar and set styles to the components of the layout
     this->game_bar = new GameBar();
     this->level_view->setSceneRect(this->level_scene->itemsBoundingRect());
     this->level_view->setAlignment(Qt::AlignCenter);
-    this->layout = new QVBoxLayout(this);
     this->level_view->setStyleSheet("background-color: transparent;");
+
+    // Create layout that consists of the level_view and game_bar
+    this->layout = new QVBoxLayout(this);
     this->layout->addWidget(this->game_bar);
     this->layout->addWidget(this->level_view);
-    this->layout->addWidget(this->game_bar);
-    this->overlay = new LevelOverlay();
 
+    // Initialize game overlays
+    this->overlay = new LevelOverlay();
     this->i_overlay = new InfoOverlay();
 
+    // Adjust styles of the level_view, disabling vertical and horizontal scrollbars
     this->level_view->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     this->level_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->level_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -47,6 +54,7 @@ Level::Level(QWidget* parent) :
         this->clear_level();
         emit this->exit_level();
     });
+
     connect(this->overlay->get_save_btn(), &QPushButton::clicked, this, [this](){
         auto now = std::chrono::system_clock::now();
         auto time_t_now = std::chrono::system_clock::to_time_t(now);
@@ -238,6 +246,7 @@ void Level::restart_level() {
     } else {
         this->fill_scene(this->level_scene);
     }
+    // Update count of moves and collected keys in the game bar
     game_bar->set_moves(this->pacman->get_move_count(), this->replay_mode ? this->game_moves.size() : 0);
     game_bar->set_keys_collected(this->pacman->get_collected_keys_count());
 }
@@ -459,6 +468,7 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
         }
 
     }
+    // Update count of moves and collected keys in the game bar
     game_bar->set_moves(0, this->replay_mode ? (int) this->game_moves.size() : 0);
     game_bar->set_keys_collected(0);
     this->level_vector.load_from_file(file_stream);
@@ -513,6 +523,7 @@ void Level::load_game_moves(std::ifstream &file_stream) {
 }
 
 void Level::on_pacman_move_over() {
+    // Update count of moves and collected keys in the game bar
     game_bar->set_moves(this->pacman->get_move_count(), this->replay_mode ? this->game_moves.size() : 0);
     game_bar->set_keys_collected(this->pacman->get_collected_keys_count());
 }
