@@ -1,3 +1,9 @@
+/**
+ * @file main.cpp
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
+ * @brief Declaration and implementation of the class MainWindow and implementation of the function main()
+ */
+
 #include <QApplication>
 #include <QMainWindow>
 #include <QWidget>
@@ -13,29 +19,39 @@
 #include "level.h"
 #include "widgets.h"
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
- *
+ * @brief Class that represents the window of the application
  */
 class MainWindow : public QMainWindow {
 private:
-    QStackedWidget *app_main_widgets;
-
-    Menu *menu;
-    Level *level;
-    ControlsWidget *controls_widget;
-    SelectMap *select_map;
-
-protected:
-    void resizeEvent(QResizeEvent *event) override;
+    QStackedWidget *app_main_widgets; ///< Pointer to the QStackedWidget object that holds the main widgets
+    Menu *menu; ///< Pointer to the Menu widget
+    Level *level; ///< Pointer to the Level widget
+    ControlsWidget *controls_widget; ///< Pointer to the Pointer to the ControlsWidget widget
+    SelectMap *select_map; ///< Pointer to the SelectMap widget
 
 public:
+    /**
+     * @breif Construct the MainWindow object
+     * @param parent Parent widget
+     */
     explicit MainWindow(QWidget *parent = nullptr);
+
+    /**
+     * @brief Destructor of the MainWindow object
+     */
     ~MainWindow() override;
 
+    /**
+     * @brief Handling of the key press events
+     * @param event Pointer to the QKeyEvent object containing the details of the key event
+     */
     void keyPressEvent(QKeyEvent *event) override;
 
+    /**
+     * @brief Method that
+     * @param replay
+     */
     void load_map(bool replay);
     void display_menu();
     void display_map_selection();
@@ -120,21 +136,14 @@ void MainWindow::exit_app() {
     qApp->exit();
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event) {
-    QWidget::resizeEvent(event);
-}
-
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     if (this->level->key_handle_ready()){
         this->level->handle_key_press(event);
     }
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-
 
     QFontDatabase::addApplicationFont("resources/font/VT323-Regular.ttf");
 

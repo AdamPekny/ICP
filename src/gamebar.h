@@ -1,6 +1,8 @@
-//
-// Created by adam on 08/05/23.
-//
+/**
+ * @file gamebar.h
+ * @author Samuel Slávik (xslavi37)
+ * @brief Declaration of the class GameBar
+ */
 
 #ifndef CMAKE_BUILD_DEBUG_ICP_PACMAN_GAMEBAR_H
 #define CMAKE_BUILD_DEBUG_ICP_PACMAN_GAMEBAR_H
@@ -15,13 +17,31 @@
 
 #include "styles.h"
 
+/**
+ * @brief Widget that displays number of moves and number of collected keys
+ */
 class GameBar : public QWidget {
 private:
     QLabel *keys_label;
     QLabel *moves_label;
 public:
+    /**
+     * @brief Constructs the GameBar object with parent default set to nullptr
+     * @param parent Parent widget of the GameBar
+     */
     explicit GameBar(QWidget *parent = nullptr);
+
+    /**
+     * @brief Updates the text inside moves_label
+     * @param count Number of done moves
+     * @param total_count Total number of moves done (displayed only in replay mode)
+     */
     void set_moves(int count, int total_count);
+
+    /**
+     * @brief Updates the text inside keys_label
+     * @param count Number of the collected keys
+     */
     void set_keys_collected(int count);
 };
 

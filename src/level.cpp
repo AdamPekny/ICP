@@ -134,7 +134,6 @@ void Level::handle_key_press(QKeyEvent *event) {
                 if (game_over){
                     return;
                 }
-
                 this->pacman->change_direction(event);
                 break;
             case Qt::Key_P:
