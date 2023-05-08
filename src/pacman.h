@@ -50,13 +50,12 @@ public:
     void game_start();
     void game_toggle();
     void game_start_if_stopped();
-
 signals:
     void game_over(bool win);
     void pacman_move_over();
 
 public slots:
-    void move();
+            void move();
     void handle_game_over(bool win);
 
 private:

@@ -13,6 +13,8 @@
 #include <QLabel>
 #include <QDebug>
 
+#include "styles.h"
+
 class GameBar : public QWidget {
 private:
     QLabel *keys_label;

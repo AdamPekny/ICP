@@ -6,7 +6,7 @@
 #include <QLabel>
 
 #include "config.h"
-
+#include "styles.h"
 
 class Menu : public QWidget {
 private:

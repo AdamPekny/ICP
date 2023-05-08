@@ -19,3 +19,4 @@ target_link_libraries(ICP_pacman
         Qt5::Widgets
         )
 
+

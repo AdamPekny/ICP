@@ -26,11 +26,11 @@ public:
 
     class SceneGenerationException : std::exception {};
 
-signals:
-    void exit_level();
+    signals:
+            void exit_level();
 
 public slots:
-    void handle_game_over(bool win);
+            void handle_game_over(bool win);
     void restart_level();
     void clear_level();
 
@@ -38,7 +38,7 @@ public slots:
 private:
     QGraphicsView *level_view;
     QGraphicsScene *level_scene;
-    QHBoxLayout *layout;
+    QVBoxLayout *layout;
     std::string level_file;
     MapVector level_vector;
     std::vector<std::vector<char>> game_moves;
