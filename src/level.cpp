@@ -5,6 +5,7 @@
 #include "level.h"
 #include "mapobjects.h"
 #include "config.h"
+#include "styles.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QLayout>

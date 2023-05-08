@@ -47,3 +47,5 @@
                         font-family: 'VT323'; \
                         font-size: 20px; \
                     }"
+
+#define BACKGROUND_STYLE "background-image: url(resources/textures/water.png);"
