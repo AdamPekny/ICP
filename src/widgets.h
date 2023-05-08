@@ -17,6 +17,7 @@ public:
     explicit Menu(QWidget *parent = nullptr);
 };
 
+
 class ControlsWidget : public QWidget {
 private:
 public:
@@ -24,6 +25,7 @@ public:
     explicit ControlsWidget(QWidget *parent = nullptr);
 private:
 };
+
 
 class SelectMap : public QWidget {
 private:
