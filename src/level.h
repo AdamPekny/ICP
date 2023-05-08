@@ -10,8 +10,8 @@
 #include <string>
 #include <QHBoxLayout>
 
-#include "../Headers/mapvector.h"
-#include "../Headers/leveloverlay.h"
+#include "mapvector.h"
+#include "leveloverlay.h"
 #include "pacman.h"
 
 

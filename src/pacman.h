@@ -35,14 +35,15 @@ public:
 
     size_t total_key_count();
     MapVector get_map_vector();
-    size_t get_move_count();
+    size_t get_move_count() const;
     void set_move_count(size_t count);
     std::vector<std::vector<char>> *get_game_moves();
-    bool is_replay_mode();
+    bool is_replay_mode() const;
 
     void add_ghost_move(size_t ghost_idx, char ghost_direction);
 
     void change_direction(QKeyEvent *event);
+    void change_texture();
 
     void game_stop();
     void game_start();

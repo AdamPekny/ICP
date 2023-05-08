@@ -6,8 +6,8 @@
 #include <QtDebug>
 #include <QPen>
 
-#include "../Headers/pacman.h"
-#include "../Headers/config.h"
+#include "pacman.h"
+#include "config.h"
 
 
 Pacman::Pacman(MapVector map_vector, std::vector<std::vector<char>> *moves, bool replay) :
@@ -23,7 +23,7 @@ replay_time_flow('F') {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
-    this->setBrush(QBrush(QImage("../Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("resources/textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
     this->move_anim = new QVariantAnimation();
     this->move_anim->setDuration(this->timer_speed - 200);
@@ -39,8 +39,11 @@ void Pacman::move() {
         qDebug() << "P :" << this->move_count;
         if (this->move_count == this->game_moves->size() && time_flow == 'F') return;
         if (this->move_count == 0 && time_flow == 'B') return;
+
         if (time_flow == 'B'){
-            switch ((*this->game_moves)[this->move_count - 1][0]) {
+            this->direction = (*this->game_moves)[this->move_count - 1][0];
+            this->change_texture();
+            switch (this->direction) {
                 case 'U':
                     this->direction = 'D';
                     break;
@@ -58,7 +61,8 @@ void Pacman::move() {
                     break;
             }
         } else {
-            this->direction = (*this->game_moves)[move_count][0];
+            this->direction = (*this->game_moves)[this->move_count][0];
+            this->change_texture();
         }
     }
 
@@ -167,22 +171,41 @@ void Pacman::change_direction(QKeyEvent *event) {
         case Qt::Key_W:
         case Qt::Key_Up:
             this->direction = 'U';
-            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-top.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("resources/textures/pacman-top.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_A:
         case Qt::Key_Left:
             this->direction = 'L';
-            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-left.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("resources/textures/pacman-left.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_S:
         case Qt::Key_Down:
             this->direction = 'D';
-            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-bottom.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("resources/textures/pacman-bottom.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_D:
         case Qt::Key_Right:
             this->direction = 'R';
-            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("resources/textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
+            break;
+        default:
+            break;
+    }
+}
+
+void Pacman::change_texture() {
+    switch (this->direction) {
+        case 'U':
+            this->setBrush(QBrush(QImage("resources/textures/pacman-top.png").scaled(CELL_SIZE,CELL_SIZE)));
+            break;
+        case 'L':
+            this->setBrush(QBrush(QImage("resources/textures/pacman-left.png").scaled(CELL_SIZE,CELL_SIZE)));
+            break;
+        case 'D':
+            this->setBrush(QBrush(QImage("resources/textures/pacman-bottom.png").scaled(CELL_SIZE,CELL_SIZE)));
+            break;
+        case 'R':
+            this->setBrush(QBrush(QImage("resources/textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         default:
             break;
@@ -205,11 +228,11 @@ std::vector<std::vector<char>> *Pacman::get_game_moves() {
     return this->game_moves;
 }
 
-size_t Pacman::get_move_count() {
+size_t Pacman::get_move_count() const {
     return this->move_count;
 }
 
-bool Pacman::is_replay_mode() {
+bool Pacman::is_replay_mode() const {
     return this->replay_mode;
 }
 

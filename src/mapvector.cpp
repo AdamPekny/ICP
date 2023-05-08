@@ -6,7 +6,7 @@
 #include <fstream>
 #include <regex>
 
-#include "../Headers/mapvector.h"
+#include "mapvector.h"
 
 
 void MapVector::load_from_file(std::ifstream& s_map_file) {

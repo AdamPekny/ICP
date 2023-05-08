@@ -9,7 +9,7 @@
 #include <regex>
 #include <vector>
 #include <QPoint>
-#include "../Headers/mapvector.h"
+#include "mapvector.h"
 
 
 class LevelEndRepr {

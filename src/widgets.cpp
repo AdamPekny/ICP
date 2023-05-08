@@ -1,5 +1,5 @@
-#include "../Headers/widgets.h"
-#include "../Headers/styles.h"
+#include "widgets.h"
+#include "styles.h"
 
 Menu::Menu(QWidget *parent) : QWidget(parent) {
     this->button1 = new QPushButton("Play", this);

@@ -9,7 +9,7 @@
 #include <QObject>
 #include <string>
 
-#include "../Headers/config.h"
+#include "config.h"
 
 class MapObserverObject : public QObject, public QGraphicsRectItem {
     Q_OBJECT
