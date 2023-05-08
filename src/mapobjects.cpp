@@ -32,18 +32,24 @@ Key::Key(QPoint coordinates, Pacman *subject) : collected(false), collection_mov
 
 void Key::update(char time_flow) {
     if (time_flow == 'B'){
-        if (collidesWithItem(this->subject) && this->collected && this->collection_move == this->subject->get_move_count()){
-            this->collection_move = 0;
-            this->collected = false;
-            this->setBrush(QBrush(QImage("resources/textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
-            this->subject->keys_collected--;
+        if (this->collected && this->collection_move + 2 == this->subject->get_move_count()){
+            QPoint position = {(int) this->pos().x() / CELL_SIZE, (int) this->pos().y() / CELL_SIZE};
+            if (position == this->subject->position){
+                this->collection_move = 0;
+                this->collected = false;
+                this->setBrush(QBrush(QImage("resources/textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
+                this->subject->keys_collected--;
+            }
         }
     } else {
-        if (collidesWithItem(this->subject) && !this->collected){
-            this->collection_move = this->subject->get_move_count();
-            this->collected = true;
-            this->setBrush(QBrush(QImage("resources/textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
-            this->subject->keys_collected++;
+        if (!this->collected){
+            QPoint position = {(int) this->pos().x() / CELL_SIZE, (int) this->pos().y() / CELL_SIZE};
+            if (position == this->subject->position){
+                this->collection_move = this->subject->get_move_count();
+                this->collected = true;
+                this->setBrush(QBrush(QImage("resources/textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
+                this->subject->keys_collected++;
+            }
         }
     }
 
@@ -86,8 +92,11 @@ Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
 void Target::update(char time_flow) {
     (void) time_flow;
     if (this->subject->is_replay_mode()) return;
-    if (this->subject->keys_collected == this->subject->total_key_count() && collidesWithItem(this->subject)){
-        emit this->subject->game_over(true);
+    QPoint position = {(int) this->pos().x() / CELL_SIZE, (int) this->pos().y() / CELL_SIZE};
+    if (this->subject->keys_collected == this->subject->total_key_count()){
+        if (position == this->subject->position){
+            emit this->subject->game_over(true);
+        }
     }
 }
 
@@ -131,7 +140,6 @@ Ghost::~Ghost() {
 
 void Ghost::update(char time_flow) {
     if (this->subject->is_replay_mode()){
-        qDebug() << this->index << ':' << this->subject->get_move_count();
         if (time_flow == 'B'){
             switch ((*this->subject->get_game_moves())[this->subject->get_move_count() - 1][this->index]) {
                 case 'U':

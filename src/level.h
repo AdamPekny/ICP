@@ -1,7 +1,7 @@
 /**
  * @file level.h
  * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
- * @brief Declaration of the class Level
+ * @brief Interface for class level
  */
 
 #ifndef ICP_PACMAN_LEVEL_H
@@ -21,7 +21,8 @@
 /**
  * @brief Widget that displays the single level / game of pacman
  *
- * Here will be long comment
+ * Widget responsible for holding scene and view of level and providing an interface to provide needed data
+ * to other components.
  */
 class Level : public QWidget {
     Q_OBJECT
