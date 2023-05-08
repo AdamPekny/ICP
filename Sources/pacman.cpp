@@ -23,7 +23,7 @@ replay_time_flow('F') {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
-    this->setBrush(QBrush(QImage("../Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
     this->move_anim = new QVariantAnimation();
     this->move_anim->setDuration(this->timer_speed - 200);
@@ -104,6 +104,8 @@ void Pacman::move() {
         this->move_count++;
     }
     qDebug() << "END :" << time_flow;
+
+    emit this->pacman_move_over();
 }
 
 Pacman::~Pacman() {
@@ -167,22 +169,22 @@ void Pacman::change_direction(QKeyEvent *event) {
         case Qt::Key_W:
         case Qt::Key_Up:
             this->direction = 'U';
-            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-top.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("./Resources/Textures/pacman-top.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_A:
         case Qt::Key_Left:
             this->direction = 'L';
-            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-left.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("./Resources/Textures/pacman-left.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_S:
         case Qt::Key_Down:
             this->direction = 'D';
-            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-bottom.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("./Resources/Textures/pacman-bottom.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         case Qt::Key_D:
         case Qt::Key_Right:
             this->direction = 'R';
-            this->setBrush(QBrush(QImage("../Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
+            this->setBrush(QBrush(QImage("./Resources/Textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
             break;
         default:
             break;
@@ -207,6 +209,9 @@ std::vector<std::vector<char>> *Pacman::get_game_moves() {
 
 size_t Pacman::get_move_count() {
     return this->move_count;
+}
+size_t Pacman::get_collected_keys_count() {
+    return this->keys_collected;
 }
 
 bool Pacman::is_replay_mode() {

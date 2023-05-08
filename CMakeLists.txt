@@ -6,16 +6,16 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-find_package(Qt6 COMPONENTS
+find_package(Qt5 COMPONENTS
         Core
         Gui
         Widgets
         REQUIRED)
 
-add_executable(ICP_pacman Sources/main.cpp Headers/pacman.h Sources/pacman.cpp Headers/level.h Sources/level.cpp Headers/mapvector.h Sources/mapvector.cpp Headers/mapobjects.h Headers/mapobserverobject.h Sources/mapobjects.cpp Sources/widgets.cpp Headers/widgets.h Headers/leveloverlay.h Sources/leveloverlay.cpp Headers/styles.h Sources/widgets.cpp)
+add_executable(ICP_pacman Sources/main.cpp Headers/pacman.h Sources/pacman.cpp Headers/level.h Sources/level.cpp Headers/mapvector.h Sources/mapvector.cpp Headers/mapobjects.h Headers/mapobserverobject.h Sources/mapobjects.cpp Sources/widgets.cpp Headers/widgets.h Headers/leveloverlay.h Sources/leveloverlay.cpp Headers/styles.h Sources/widgets.cpp Sources/gamebar.cpp Headers/gamebar.h)
 target_link_libraries(ICP_pacman
-        Qt6::Core
-        Qt6::Gui
-        Qt6::Widgets
+        Qt5::Core
+        Qt5::Gui
+        Qt5::Widgets
         )
 

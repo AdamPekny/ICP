@@ -18,7 +18,6 @@
 #include <QStackedWidget>
 #include <functional>
 
-
 #include <QtDebug>
 #include <QFontDatabase>
 
@@ -86,7 +85,7 @@ void MainWindow::display_level(const std::string& file_path, bool replay) {
 }
 
 void MainWindow::load_map(bool replay) {
-    std::string directory = "../Resources/";
+    std::string directory = "./Resources/";
     directory += (replay ? "Replays" : "Maps");
     QString file_path = QFileDialog::getOpenFileName(this, "Select a map file", directory.c_str(), "");
     if (file_path.isEmpty()) {
@@ -130,17 +129,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(menu->button4, &QPushButton::clicked, this, &MainWindow::display_controls_widget);
     connect(menu->button5, &QPushButton::clicked, this, &MainWindow::exit_app);
 
-    connect(select_map->button1, &QPushButton::clicked, this, [this] { display_level("../Resources/Maps/map_01.src", false); });
-    connect(select_map->button2, &QPushButton::clicked, this, [this] { display_level("../Resources/Maps/map_02.src", false); });
-    connect(select_map->button3, &QPushButton::clicked, this, [this] { display_level("../Resources/Maps/map_03.src", false); });
+    connect(select_map->button1, &QPushButton::clicked, this, [this] { display_level("./Resources/Maps/map_01.src", false); });
+    connect(select_map->button2, &QPushButton::clicked, this, [this] { display_level("./Resources/Maps/map_02.src", false); });
+    connect(select_map->button3, &QPushButton::clicked, this, [this] { display_level("./Resources/Maps/map_03.src", false); });
 
     connect(controls_widget->button_back, &QPushButton::clicked, this, &MainWindow::display_menu);
 
     // Set background
-    //QPixmap background("../Resources/Textures/water.png");
-    //QPalette palette;
-    //palette.setBrush(QPalette::Background, background);
-    //this->setPalette(palette);
+    QPixmap background("./Resources/Textures/water.png");
+    QPalette palette;
+    palette.setBrush(QPalette::Background, background);
+    this->setPalette(palette);
 
     this->setCentralWidget(app_main_widgets);
     this->display_menu();
@@ -162,7 +161,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    QFontDatabase::addApplicationFont("../Resources/Font/VT323-Regular.ttf"); // Replace path with the path to your font file
+    QFontDatabase::addApplicationFont("./Resources/Font/VT323-Regular.ttf"); // Replace path with the path to your font file
 
     MainWindow main_window(nullptr);
 

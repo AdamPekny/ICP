@@ -12,6 +12,7 @@
 
 #include "../Headers/mapvector.h"
 #include "../Headers/leveloverlay.h"
+#include "../Headers/gamebar.h"
 #include "pacman.h"
 
 
@@ -48,11 +49,13 @@ private:
     bool game_over;
     LevelOverlay *overlay;
     bool replay_mode;
+    GameBar *game_bar;
 
     void fill_scene(QGraphicsScene *scene);
     void fill_scene_end(QGraphicsScene *scene);
     QGraphicsScene *generate_scene();
     void load_game_moves(std::ifstream& file_stream);
+    void on_pacman_move_over();
 };
 
 #endif //ICP_PACMAN_LEVEL_H

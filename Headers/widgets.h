@@ -14,6 +14,7 @@ public:
     QPushButton *button2;
     QPushButton *button3;
     QPushButton *button4;
+    QPushButton *button5;
     explicit Menu(QWidget *parent = nullptr);
 };
 

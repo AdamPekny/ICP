@@ -14,20 +14,20 @@
 
 Wall::Wall(QPoint coordinates) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
-    this->setBrush(QBrush(QImage("../Resources/Textures/wall.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/wall.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
 }
 
 Path::Path(QPoint coordinates) {
     this->setRect(coordinates.x(), coordinates.y(), CELL_SIZE, CELL_SIZE);
-    this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
 }
 
 Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false), collection_move(0) {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
-    this->setBrush(QBrush(QImage("../Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
 }
 
@@ -70,7 +70,7 @@ void Key::set_from_state_str(const std::string& state) {
     this->collected = (bool) std::strtol(state.substr(2, 1).c_str(), &endptr, 10);
     if (*endptr != '\0') throw std::exception();
     if (this->collected){
-        this->setBrush(QBrush(QImage("../Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
+        this->setBrush(QBrush(QImage("./Resources/Textures/water.png").scaled(CELL_SIZE,CELL_SIZE)));
         this->subject->keys_collected++;
     }
     this->collection_move = std::strtoul(state.substr(4, state.length() - 4).c_str(), &endptr, 10);
@@ -80,7 +80,7 @@ void Key::set_from_state_str(const std::string& state) {
 Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
-    this->setBrush(QBrush(QImage("../Resources/Textures/finish.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/finish.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
 }
 
@@ -103,7 +103,7 @@ std::string Target::export_state_str() {
 Ghost::Ghost(QPoint coordinates, size_t index, Pacman *subject) : subject(subject), index(index), direction('R') {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
-    this->setBrush(QBrush(QImage("../Resources/Textures/ghost.png").scaled(CELL_SIZE,CELL_SIZE)));
+    this->setBrush(QBrush(QImage("./Resources/Textures/ghost.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
     this->move_anim = new QVariantAnimation();
     this->move_anim->setDuration(100);

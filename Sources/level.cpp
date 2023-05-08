@@ -26,8 +26,10 @@ Level::Level(QWidget* parent) :
                     replay_mode(false),
                     max_moves(0) {
     this->level_view->setScene(this->level_scene);
+    this->game_bar = new GameBar();
     this->layout = new QHBoxLayout(this);
     this->layout->addWidget(this->level_view);
+    this->layout->addWidget(this->game_bar);
     this->overlay = new LevelOverlay();
 
     this->level_view->setFocusPolicy(Qt::FocusPolicy::NoFocus);
@@ -48,7 +50,7 @@ Level::Level(QWidget* parent) :
         std::strftime(file_name_datetime, sizeof(file_name_datetime), "%Y%m%d%H%M%S", time_now);
         std::string file_name = "replay";
         file_name = file_name + file_name_datetime + ".log";
-        std::ofstream log_file("../Resources/Replays/" + file_name);
+        std::ofstream log_file("./Resources/Replays/" + file_name);
 
         auto moves = this->game_moves;
         for (auto &row : moves){
@@ -218,11 +220,14 @@ void Level::restart_level() {
     } else {
         this->fill_scene(this->level_scene);
     }
+    game_bar->set_moves(this->pacman->get_move_count(), this->replay_mode ? this->game_moves.size() : 0);
+    game_bar->set_keys_collected(this->pacman->get_collected_keys_count());
 }
 
 void Level::fill_scene(QGraphicsScene *scene) {
     this->pacman = new Pacman(this->level_vector, &this->game_moves, this->replay_mode);
     connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
+    connect(this->pacman, &Pacman::pacman_move_over, this, [this](){on_pacman_move_over();});
 
     int x = 0, y = 0;
     QPoint start_pos = {0, 0};
@@ -284,6 +289,7 @@ void Level::fill_scene(QGraphicsScene *scene) {
 void Level::fill_scene_end(QGraphicsScene *scene) {
     this->pacman = new Pacman(this->level_vector, &this->game_moves, this->replay_mode);
     connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
+    connect(this->pacman, &Pacman::pacman_move_over, this, [this](){on_pacman_move_over();});
 
     int x = 0, y = 0;
     Target *target = nullptr;
@@ -419,6 +425,8 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
         qDebug() << "Going to map load!";
 
     }
+    game_bar->set_moves(0, this->replay_mode ? this->game_moves.size() : 0);
+    game_bar->set_keys_collected(0);
     qDebug() << "Loading map vector!";
     this->level_vector.load_from_file(file_stream);
     file_stream.close();
@@ -464,4 +472,9 @@ void Level::load_game_moves(std::ifstream &file_stream) {
     if (file_stream.eof()) {
         throw MapVector::OpenFileException();
     }
+}
+
+void Level::on_pacman_move_over() {
+    game_bar->set_moves(this->pacman->get_move_count(), this->replay_mode ? this->game_moves.size() : 0);
+    game_bar->set_keys_collected(this->pacman->get_collected_keys_count());
 }
