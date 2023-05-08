@@ -93,11 +93,11 @@ private:
     std::string level_file; ///< Path to the file containing map / level
     std::vector<std::vector<char>> game_moves; ///< 2D vector that stores the game moves
     std::vector<std::pair<QPoint, std::string>> observers_end_states; ///< Vector of encoded states of the observers
+    Pacman *pacman; ///< Pointer to the Pacman
     bool game_over; ///< Flag that indicates if the game has ended
+    bool replay_mode; ///< Flag that indicates if the replay mode is active
     LevelOverlay *overlay; ///< Pointer to the QGraphicsRectItem object LevelOverlay
     InfoOverlay *i_overlay; ///< Pointer to the QGraphicsRectItem object InfoOverlay
-    bool replay_mode; ///< Flag that indicates if the replay mode is active
-    Pacman *pacman; ///< Pointer to the Pacman
     MapVector level_vector; ///< 2D vector that stores the map of the level
     GameBar *game_bar; ///< Pointer to the GameBar widget
     bool game_started = false; ///< flag that indicates if the game has started, default set to false

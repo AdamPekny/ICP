@@ -56,16 +56,19 @@ Level::Level(QWidget* parent) :
     });
 
     connect(this->overlay->get_save_btn(), &QPushButton::clicked, this, [this](){
+        // Get date time to name file
         auto now = std::chrono::system_clock::now();
         auto time_t_now = std::chrono::system_clock::to_time_t(now);
         auto time_now = std::localtime(&time_t_now);
 
+        // Name and open file
         char file_name_datetime[20];
         std::strftime(file_name_datetime, sizeof(file_name_datetime), "%Y%m%d%H%M%S", time_now);
         std::string file_name = "replay";
         file_name = file_name + file_name_datetime + ".log";
         std::ofstream log_file("resources/replays/" + file_name);
 
+        // Write moves to file
         auto moves = this->game_moves;
         for (auto &row : moves){
             for (char &c : row) {
@@ -74,19 +77,23 @@ Level::Level(QWidget* parent) :
             log_file << '\n';
         }
 
+        // Mark that moves end
         log_file << "-\n";
 
-
+        // Write observers states and positions to file
         auto observers_state = this->pacman->get_observers_state();
         log_file << observers_state.size() + 1 << '\n';
+        // Add pacman with total move count
         log_file << this->pacman->pos().x() << ',' << this->pacman->pos().y() << ',' << "P," << this->pacman->get_move_count() << ' ';
         for (auto &state : observers_state) {
             log_file << state.first.x() << ',' << state.first.y() << ',' << state.second.c_str() << ' ';
         }
         log_file << "\n";
 
+        // Mark that observers end state info is over
         log_file << "-\n";
 
+        // Write map to the file
         log_file << this->level_vector.get_dimensions().first << ' ' << this->level_vector.get_dimensions().second << '\n';
         auto vector = this->level_vector.get_vector();
         for (auto row_iter = vector.begin() + 1; row_iter != vector.end() - 1; row_iter++){
@@ -133,14 +140,14 @@ QGraphicsScene *Level::generate_scene() {
 }
 
 void Level::handle_key_press(QKeyEvent *event) {
-    if (!this->game_started){
+    if (!this->game_started){ // Press any button to start
         this->game_started = true;
         this->level_scene->removeItem(this->i_overlay);
         this->pacman->game_start();
         return;
     }
 
-    if (!this->replay_mode){
+    if (!this->replay_mode){ // In-game controls
         switch (event->key()) {
             case Qt::Key_W:
             case Qt::Key_Up:
@@ -182,7 +189,7 @@ void Level::handle_key_press(QKeyEvent *event) {
             default:
                 break;
         }
-    } else {
+    } else { // Replay controls
         switch (event->key()) {
             case Qt::Key_Left:
                 this->pacman->replay_time_flow = 'B';
@@ -230,7 +237,7 @@ void Level::handle_game_over(bool win) {
         return;
     }
     this->game_over = true;
-
+    // Display game over overlay
     std::string game_over_message = win ? "You Win!" : "You Died!";
     QColor message_color = win ? Qt::green : Qt::red;
     this->overlay->setup_overlay(this->level_scene, game_over_message, message_color, this->replay_mode);
@@ -241,27 +248,31 @@ void Level::restart_level() {
     char time_flow = this->pacman->replay_time_flow;
     disconnect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
     this->clear_level();
-    if (time_flow == 'B'){
+
+    if (time_flow == 'B'){ // Restart to end when time flows backwards
         this->fill_scene_end(this->level_scene);
-    } else {
+    } else { // Restart to start
         this->fill_scene(this->level_scene);
     }
     // Update count of moves and collected keys in the game bar
-    game_bar->set_moves(this->pacman->get_move_count(), this->replay_mode ? this->game_moves.size() : 0);
-    game_bar->set_keys_collected(this->pacman->get_collected_keys_count());
+    game_bar->set_moves((int) this->pacman->get_move_count(), this->replay_mode ? (int) this->game_moves.size() : 0);
+    game_bar->set_keys_collected((int) this->pacman->get_collected_keys_count());
 }
 
 void Level::fill_scene(QGraphicsScene *scene) {
+    // Create player and connect handlers
     this->pacman = new Pacman(this->level_vector, &this->game_moves, this->replay_mode);
     connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
     connect(this->pacman, &Pacman::pacman_move_over, this, [this](){on_pacman_move_over();});
 
+    // Initialize needed variables
     int x = 0, y = 0;
     QPoint start_pos = {0, 0};
     std::vector<QPoint> ghosts_pos;
     Target *target = nullptr;
     Key *key = nullptr;
 
+    // For each cell in map 2d vector create map object
     for (auto &row : this->level_vector.get_vector()){
         for (auto &cell : row) {
             switch (cell) {
@@ -300,10 +311,12 @@ void Level::fill_scene(QGraphicsScene *scene) {
         x = 0;
     }
 
+    // Set player position and add it to scene
     pacman->setPos(start_pos.x(), start_pos.y());
 
     scene->addItem(this->pacman);
 
+    // Add ghosts
     size_t ghost_index = 1;
     for (auto &ghost_pos : ghosts_pos) {
         Ghost *ghost = new Ghost(QPoint(ghost_pos.x(), ghost_pos.y()), ghost_index, pacman);
@@ -312,6 +325,7 @@ void Level::fill_scene(QGraphicsScene *scene) {
         ghost_index++;
     }
 
+    // Match scene size to its content
     this->level_scene->setSceneRect(
             0,
             0,
@@ -320,19 +334,23 @@ void Level::fill_scene(QGraphicsScene *scene) {
     );
     this->level_view->setAlignment(Qt::AlignCenter);
 
+    // Display Press any button to start info overlay
     this->i_overlay->setup_overlay(this->level_scene, "Press any button to start!", Qt::white);
     this->level_scene->addItem(this->i_overlay);
 }
 
 void Level::fill_scene_end(QGraphicsScene *scene) {
+    // Create player and connect handlers
     this->pacman = new Pacman(this->level_vector, &this->game_moves, this->replay_mode);
     connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
     connect(this->pacman, &Pacman::pacman_move_over, this, [this](){on_pacman_move_over();});
 
+    // Initialize needed variables
     int x = 0, y = 0;
     Target *target = nullptr;
     Key *key = nullptr;
 
+    // For each cell in map 2d vector create map object
     for (auto &row : this->level_vector.get_vector()){
         for (auto &cell : row) {
             switch (cell) {
@@ -347,7 +365,7 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
                     break;
                 case MapVector::MapObjectType::Key:
                     key = new Key(QPoint(x, y), pacman);
-                    key->set_from_state_str(
+                    key->set_from_state_str( // Set key state from encoded state string
                             std::find_if(this->observers_end_states.begin(), this->observers_end_states.end(), [x,y](auto &item){
                                 return item.second[0] == 'K' && item.first == QPoint(x, y);
                             })->second
@@ -370,6 +388,7 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
         x = 0;
     }
 
+    // Set player from state string
     auto pacman_end_state = std::find_if(this->observers_end_states.begin(), this->observers_end_states.end(), [](auto &item){
         return item.second[0] == 'P';
     });
@@ -381,10 +400,11 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
     if (*endptr != '\0'){
         throw Level::SceneGenerationException();
     }
-
+    // Add player to scene and set time flow to backwards
     scene->addItem(this->pacman);
     pacman->replay_time_flow = 'B';
 
+    // For each ghost set its position and index from state item and string
     for (auto &state : this->observers_end_states) {
         if (state.second[0] != 'G'){
             continue;
@@ -398,6 +418,7 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
         scene->addItem(ghost);
     }
 
+    // Match scene size to its content
     this->level_scene->setSceneRect(
             0,
             0,
@@ -406,45 +427,58 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
     );
     this->level_view->setAlignment(Qt::AlignCenter);
 
+    // Display Press any button to start info overlay
     this->i_overlay->setup_overlay(this->level_scene, "Press any button to start!", Qt::white);
     this->level_scene->addItem(this->i_overlay);
 }
 
 QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
+    // Initialize class attributes
     this->clear_level();
     this->replay_mode = replay;
     this->level_vector.clear();
     this->level_file = file_path;
+    // Read input log or map source file
     std::ifstream file_stream;
     file_stream.open(file_path);
     if (!file_stream.is_open()){
         throw MapVector::OpenFileException();
     }
-    if (replay){
+
+    if (replay){ // If its replay file, load replay dependencies first
+        // Load game moves
         this->load_game_moves(file_stream);
+
+        // Load observers and player states
         std::string line;
         char *endptr = nullptr;
         std::getline(file_stream, line);
+
+        // Get number of observers and player (observers count + 1)
         size_t states_count = std::strtoul(line.c_str(), &endptr, 10);
         if (*endptr != '\0'){
             throw MapVector::FileFormatException();
         }
+
+        // For each observer/player store position and string encoded state
+        // Entries are separated by space and look like: POSX,POSY,TYPE_CHAR,STATE_VAL1,STATE_VAL2,...
         while (std::getline(file_stream, line, ' ')){
             states_count--;
             QPoint observer_pos;
             std::string state_info;
             std::string coordinate;
             int i = 0, info_start = 0;
-            for (char c : line){
-                if (c == ','){
-                    if (i == 1){
+            for (char c : line){ // Get position
+                if (c == ','){ // Loaded whole number
+                    if (i == 1){ // Is position Y
                         observer_pos.setY((int) std::strtol(coordinate.c_str(), &endptr, 10));
                         if (*endptr != '\0') {
                             throw MapVector::FileFormatException();
                         }
                         state_info = line.substr(info_start + 2, line.length() - info_start - 2);
-                        break;
+                        break; // Got whole position so break the loop
                     }
+                    // Is position X
                     observer_pos.setX((int) std::strtol(coordinate.c_str(), &endptr, 10));
                     if (*endptr != '\0') {
                         throw MapVector::FileFormatException();
@@ -456,11 +490,14 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
                 coordinate.push_back(c);
                 info_start++;
             }
+            // Store retrieved information
             this->observers_end_states.emplace_back(observer_pos, state_info);
-            if (states_count == 0){
+
+            if (states_count == 0){ // All observers/player have been processed
                 break;
             }
         }
+        // Check format validity
         std::getline(file_stream, line);
         std::getline(file_stream, line);
         if (line != "-"){
@@ -471,6 +508,7 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
     // Update count of moves and collected keys in the game bar
     game_bar->set_moves(0, this->replay_mode ? (int) this->game_moves.size() : 0);
     game_bar->set_keys_collected(0);
+    // Load map vector
     this->level_vector.load_from_file(file_stream);
     file_stream.close();
     return this->generate_scene();
@@ -478,16 +516,18 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
 
 void Level::clear_level() {
     this->game_started = false;
-    if (!this->replay_mode){
+    if (!this->replay_mode){ // In-game on clear also logs
         this->game_moves.clear();
     }
     if (this->level_scene != nullptr){
+        // Prevent deleting overlays as they are universal for all maps
         if (this->level_scene->items().contains(this->overlay)){
             this->level_scene->removeItem(this->overlay);
         }
         if (this->level_scene->items().contains(this->i_overlay)){
             this->level_scene->removeItem(this->i_overlay);
         }
+        // Clear scene
         this->level_scene->clear();
         this->pacman = nullptr;
     }
@@ -502,6 +542,9 @@ void Level::load_game_moves(std::ifstream &file_stream) {
     this->game_moves.clear();
     std::string line;
     std::vector<char> row;
+
+    // For each line load characters separated by space
+    // Load until - is found
     while (std::getline(file_stream, line)){
         if (line == "-"){
             break;

@@ -15,21 +15,25 @@
 Pacman::Pacman(MapVector map_vector, std::vector<std::vector<char>> *moves, bool replay) :
         keys_collected(0),
         replay_time_flow('F'),
+        position({0, 0}),
         move_count(0),
         game_moves(moves),
         map_vector(std::move(map_vector)),
         direction('R'),
         move_timer(new QTimer()),
         game_ended(false),
-        replay_mode(replay),
-        position({0, 0}) {
+        replay_mode(replay) {
+    // Set bounding rectangle
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
+    // Connect movement and game over handling
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
+    // Stype player
     this->setBrush(QBrush(QImage("resources/textures/pacman-right.png").scaled(CELL_SIZE,CELL_SIZE)));
     this->setPen(Qt::NoPen);
     this->move_anim = new QVariantAnimation();
     this->move_anim->setDuration(this->timer_speed - 200);
+    // Connect animation
     connect(this->move_anim, &QVariantAnimation::valueChanged, [this](const QVariant &value) {
         this->setPos(value.toPointF());  // set the new position of rect1
     });
@@ -37,14 +41,14 @@ Pacman::Pacman(MapVector map_vector, std::vector<std::vector<char>> *moves, bool
 
 void Pacman::move() {
     char time_flow = this->replay_time_flow;
-    if (this->replay_mode){
+    if (this->replay_mode){ // If in replay mode, load direction from game moves vector
         if (this->move_count == this->game_moves->size() && time_flow == 'F') return;
         if (this->move_count == 0 && time_flow == 'B') return;
 
-        if (time_flow == 'B'){
+        if (time_flow == 'B'){ // Time flows backwards
             this->direction = (*this->game_moves)[this->move_count - 1][0];
-            this->change_texture();
-            switch (this->direction) {
+            this->change_texture(); // Keep facing as time was forwards
+            switch (this->direction) { // Move in opposite direction as in game move to move back
                 case 'U':
                     this->direction = 'D';
                     break;
@@ -61,17 +65,18 @@ void Pacman::move() {
                     this->direction = 'N';
                     break;
             }
-        } else {
+        } else { // Time flows forwards
             this->direction = (*this->game_moves)[this->move_count][0];
             this->change_texture();
         }
     }
 
+    // Get current position in map grid
     auto current_map = this->map_vector.get_vector();
     QPoint current_position = {(int) this->pos().x() / CELL_SIZE, (int) this->pos().y() / CELL_SIZE};
     QPoint new_position = current_position;
 
-    switch (this->direction) {
+    switch (this->direction) { // Calculate next position
         case 'U':
             new_position = {current_position.x(), current_position.y() - 1};
             break;
@@ -88,28 +93,33 @@ void Pacman::move() {
             break;
     }
 
+    // Set next position for colision detection
     this->position = new_position;
-    if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
-        if (!this->replay_mode) {
+
+    if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){ // Next cell is not wall
+        if (!this->replay_mode) { // Log move
             this->game_moves->push_back({this->direction});
         }
         this->move_anim->setStartValue(this->pos());
         this->move_anim->setEndValue(QPointF(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE));
         this->move_anim->start();
     } else {
-        if (!this->replay_mode) {
+        if (!this->replay_mode) { // Log no move
             this->game_moves->push_back({'N'});
         }
     }
 
+    // Update observers
     this->notify_observers(time_flow);
 
+    // Set move count
     if (time_flow == 'B'){
         this->move_count--;
     } else {
         this->move_count++;
     }
 
+    // Update interactive elements
     emit this->pacman_move_over();
 }
 
@@ -243,6 +253,7 @@ bool Pacman::is_replay_mode() const {
 }
 
 std::vector<std::pair<QPoint, std::string>> Pacman::get_observers_state() {
+    // Get encoded states of observers
     std::vector<std::pair<QPoint, std::string>> state_vector;
     for (MapObserverObject *observer : this->observers) {
         QPoint observer_pos((int) observer->pos().x(), (int) observer->pos().y());
