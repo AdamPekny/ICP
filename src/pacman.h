@@ -36,6 +36,7 @@ public:
     size_t total_key_count();
     MapVector get_map_vector();
     size_t get_move_count() const;
+    size_t get_collected_keys_count();
     void set_move_count(size_t count);
     std::vector<std::vector<char>> *get_game_moves();
     bool is_replay_mode() const;
@@ -52,6 +53,7 @@ public:
 
 signals:
     void game_over(bool win);
+    void pacman_move_over();
 
 public slots:
     void move();

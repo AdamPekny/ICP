@@ -231,6 +231,9 @@ std::vector<std::vector<char>> *Pacman::get_game_moves() {
 size_t Pacman::get_move_count() const {
     return this->move_count;
 }
+size_t Pacman::get_collected_keys_count() {
+    return this->keys_collected;
+}
 
 bool Pacman::is_replay_mode() const {
     return this->replay_mode;
