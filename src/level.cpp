@@ -2,9 +2,9 @@
 // Created by adam on 02/05/23.
 //
 
-#include "../Headers/level.h"
-#include "../Headers/mapobjects.h"
-#include "../Headers/config.h"
+#include "level.h"
+#include "mapobjects.h"
+#include "config.h"
 
 #include <QtDebug>
 #include <QGraphicsOpacityEffect>
@@ -48,7 +48,7 @@ Level::Level(QWidget* parent) :
         std::strftime(file_name_datetime, sizeof(file_name_datetime), "%Y%m%d%H%M%S", time_now);
         std::string file_name = "replay";
         file_name = file_name + file_name_datetime + ".log";
-        std::ofstream log_file("../Resources/Replays/" + file_name);
+        std::ofstream log_file("resources/replays/" + file_name);
 
         auto moves = this->game_moves;
         for (auto &row : moves){
@@ -150,7 +150,7 @@ void Level::handle_key_press(QKeyEvent *event) {
                     this->pacman->game_start();
                 } else {
                     this->pacman->game_stop();
-                    this->overlay->setup_overlay(this->level_scene, "Pause", Qt::white);
+                    this->overlay->setup_overlay(this->level_scene, "Pause", Qt::white, this->replay_mode);
                     this->level_scene->addItem(this->overlay);
                 }
                 break;
@@ -181,7 +181,7 @@ void Level::handle_key_press(QKeyEvent *event) {
                     this->pacman->game_start();
                 } else {
                     this->pacman->game_stop();
-                    this->overlay->setup_overlay(this->level_scene, "Pause", Qt::white);
+                    this->overlay->setup_overlay(this->level_scene, "Pause", Qt::white, this->replay_mode);
                     this->level_scene->addItem(this->overlay);
                 }
                 break;
@@ -202,16 +202,13 @@ void Level::handle_game_over(bool win) {
 
     std::string game_over_message = win ? "You Win!" : "You Died!";
     QColor message_color = win ? Qt::green : Qt::red;
-    this->overlay->setup_overlay(this->level_scene, game_over_message, message_color);
+    this->overlay->setup_overlay(this->level_scene, game_over_message, message_color, this->replay_mode);
     this->level_scene->addItem(this->overlay);
 }
 
 void Level::restart_level() {
     char time_flow = this->pacman->replay_time_flow;
     disconnect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
-    if (!this->replay_mode){
-        this->game_moves.clear();
-    }
     this->clear_level();
     if (time_flow == 'B'){
         this->fill_scene_end(this->level_scene);
@@ -428,6 +425,9 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
 }
 
 void Level::clear_level() {
+    if (!this->replay_mode){
+        this->game_moves.clear();
+    }
     if (this->level_scene != nullptr){
         if (this->level_scene->items().contains(this->overlay)){
             this->level_scene->removeItem(this->overlay);

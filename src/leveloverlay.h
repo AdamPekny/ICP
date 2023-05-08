@@ -19,7 +19,7 @@ public:
     explicit LevelOverlay(QGraphicsItem *parent = nullptr);
     ~LevelOverlay() override;
 
-    void setup_overlay(QGraphicsScene *bottom_scene, const std::string& label_text, QColor label_color);
+    void setup_overlay(QGraphicsScene *bottom_scene, const std::string& label_text, QColor label_color, bool replay);
     QPushButton *get_restart_btn();
     QPushButton *get_exit_btn();
     QPushButton *get_save_btn();

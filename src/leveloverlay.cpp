@@ -1,8 +1,8 @@
 //
 // Created by adam on 06/05/23.
 //
-#include "../Headers/leveloverlay.h"
-#include "../Headers/styles.h"
+#include "leveloverlay.h"
+#include "styles.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QPropertyAnimation>
@@ -18,9 +18,9 @@ LevelOverlay::LevelOverlay(QGraphicsItem *parent) : QGraphicsRectItem(parent), l
     this->exit_button = new QPushButton("Exit");
     this->save_button = new QPushButton("Save Replay");
 
-    this->restart_button->setStyleSheet(BUTTON_STYLE);
-    this->exit_button->setStyleSheet(BUTTON_STYLE);
-    this->save_button->setStyleSheet(BUTTON_STYLE);
+    this->restart_button->setStyleSheet(OVERLAY_BUTTON_STYLE);
+    this->exit_button->setStyleSheet(OVERLAY_BUTTON_STYLE);
+    this->save_button->setStyleSheet(OVERLAY_BUTTON_STYLE);
 
     this->r_btn_proxy = new QGraphicsProxyWidget(this);
     this->e_btn_proxy = new QGraphicsProxyWidget(this);
@@ -55,7 +55,7 @@ void LevelOverlay::set_label(const std::string &text, QColor &color) {
     this->label->setOpacity(1);
 }
 
-void LevelOverlay::setup_overlay(QGraphicsScene *bottom_scene, const std::string &label_text, QColor label_color) {
+void LevelOverlay::setup_overlay(QGraphicsScene *bottom_scene, const std::string& label_text, QColor label_color, bool replay) {
     this->setRect(0, 0, bottom_scene->width(), bottom_scene->height());
     this->background->setRect(this->rect());
     this->setPos(0, 0);
@@ -72,23 +72,18 @@ void LevelOverlay::setup_overlay(QGraphicsScene *bottom_scene, const std::string
 
     this->r_btn_proxy->setPos(center_x - this->r_btn_proxy->rect().width() / 2, center_y - this->r_btn_proxy->rect().height() - 10);
     this->e_btn_proxy->setPos(center_x - this->e_btn_proxy->rect().width() / 2, center_y);
+
+    if (!replay){
+        this->save_button->setEnabled(true);
+        this->s_btn_proxy->setEnabled(true);
+        this->save_button->setStyleSheet(OVERLAY_BUTTON_STYLE);
+    } else {
+        this->save_button->setEnabled(false);
+        this->s_btn_proxy->setEnabled(false);
+        this->save_button->setStyleSheet(OVERLAY_BUTTON_DISABLED_STYLE);
+    }
+
     this->s_btn_proxy->setPos(center_x - this->s_btn_proxy->rect().width() / 2, center_y + this->e_btn_proxy->rect().height() + 10);
-    /*
-    auto *overlay_anim = new QPropertyAnimation(game_end_overlay->graphicsEffect(), "opacity");
-    overlay_anim->setDuration(500);
-    overlay_anim->setStartValue(0);
-    overlay_anim->setEndValue(0.5);
-    auto *label_anim = new QPropertyAnimation(game_end_label, "opacity");
-    label_anim->setDuration(500);
-    label_anim->setStartValue(0);
-    label_anim->setEndValue(1);
-
-    auto *anim_group = new QSequentialAnimationGroup();
-    anim_group->addAnimation(overlay_anim);
-    anim_group->addAnimation(label_anim);
-
-    anim_group->start(QAbstractAnimation::DeleteWhenStopped);
-     */
 }
 
 QPushButton *LevelOverlay::get_restart_btn() {
