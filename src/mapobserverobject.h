@@ -1,7 +1,7 @@
 /**
  * @file mapobserverobject.h
  * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
- * @brief Interface of MapObserverObject abstract class, from which inherit map objects
+ * @brief Interface of MapObserverObject abstract class, from which map objects inherit
  */
 
 #ifndef ICP_PACMAN_MAPOBSERVEROBJECT_H
@@ -14,7 +14,7 @@
 #include "config.h"
 
 /**
- * @brief Abstract class from which inherit map objects
+ * @brief Abstract class from which map objects inherit
  */
 class MapObserverObject : public QObject, public QGraphicsRectItem {
     Q_OBJECT
@@ -32,8 +32,8 @@ public:
     virtual std::string export_state_str() = 0;
 
     /**
-     * @brief
-     * @return Bounding rectangle of the map object
+     * @brief Set the hit box of the map object
+     * @return Hit box of the map object
      */
     QRectF boundingRect() const override {
         qreal width_portion = this->rect().width() * BOUNDING_RECT_FRAC;

@@ -1,0 +1,62 @@
+R R R R R R R R R R R R N R R R R R R R R R R R R R R R R R R R R R R R R R R R R R R 
+R L R R R R U R R R R R L R N R N L N N L R N R R R R R R R R R R R R R R R R R R R R 
+R L R R N R U R R R R N L R L N D L D U D R U R N R R R R R N R R R D U R R U R R R R 
+D L R R U R U D L R R U L N L D D N D U N R N R L R R R R R D R R R D U R R R R D R R 
+D L D R N R R D L R U U N U N N D D D U R L D R L R R R R U D R R R D U R D R R N R R 
+L D D R D R R D U R U U R U U L D U D U R L U R L R R R R R D R R D L U R D R R U R R 
+L D D R D R R L R R U U R L U L D U D U R L N N L R L R N R D R R D L U U N R R D R R 
+L U D N D R R L R N L U R L U L D U D L R L L L L R L R U R L R R D L U D U R D N R R 
+D U D L U L R L R L L N N L U U D U D L N L L L D R D U U L L R R D L U D U R N U R U 
+R N D L U L D N R U L D L N U R U U D L L U L L D R D U U L L R R N R U R L D R R R U 
+R R D L U L D D R U L D L U U R U U D L L D L L D R D U U L L R R U R U R L D U N R U 
+D R D L N L D D R R L D L U U R D U D L L D L L D R D U U L L R R U R U R R N U L R U 
+D L D L D R D D R N D D N U N N D U N L L D L U D L D U U L L R N U R U R R U U L R U 
+D L D L D R U D R D D D R U D L D U R L L R L N D L D U U L L R L U R U D R U U L R U 
+D L D L D R U D R D D D R R D L D N R L L R N D D R N U D D L R L U R L N R U U L R N 
+L L D L D U U D R D N D R R D L D R R L L R D N N R U U D D D R L U R L R L U U L R R 
+L L D L D U U D R D L D N R D L D R L L N R D L R R D U D D R N U N R L R L U D L R R 
+D L U L D N N D L D L U U R D L N R L L U R D L R R L U D D R L U L N L R L U D L N R 
+D L U L D D R D L D L U U R D U L R R L N R D N R R L U D D R L U L U L L L N D L N R 
+D L U L D D R D L D L U U R D U L R R D D R D R R R L U D D R L U R D L U L R D R U L 
+R N U L D D R D L D L U D R D D L R R D R R D R R U L D D L R L U R N L D L L D R R L 
+R D U L D D R U L D L U D D N R L R L D U D D R R U L U D L R L U L N L N L L D R N L 
+D R U L D D N U L D L D D D R N D R L D N D D R R U L U D U R L U L L L R L L N R U L 
+D R U L D N L U L D D D D D R L N R L N R D R R R U L N D U N L U L L N R L D U R U L 
+D R U L D U L U L D D D D D N N L R L L D D R R R U L L D U N L U L L U R L D U U U L 
+R R U L U U L U L D D D D D L R L N L L N D R R R U U R L U U L R L L U N U D U U U L 
+R R U L U U L U L D U D D D L N L D L N U D U N R U U R L U U L L L L U N U D U U U L 
+D R U R U U L U L D U D U D N U L D L U N N L L R U U R L U D L N L L U U U D U U U L 
+D L U R U U L U L D U D U L R U L D N U L U L L L U U R L U D D R R L N U U D U U D D 
+D L U R U L L U L N U D U L R D L L R U L D L L L U U N U U N D R L L R U U N U U D D 
+D R N R U L L U L N U D U N U D L L R U D U N L L U R L R U L D R L L R U U U U U D D 
+U R L R U L R U L L U D U U U D L L L L U U U L L U R L R U L R N L L R U U U U U D D 
+U L L R L L R U D L U L U D U L L L U L N U U L L L R L R U L D U L L R U N U U U D D 
+R L L R L L R U D L U L U R U N L L U L R U U L L L R L R U L N U R L R U D U D U D D 
+R L L R R L R U D L N L U R D D L L R L R U U U L U U L N U L U U R L R U D U D D N N 
+R L D R R R R U D L L L U N D D L L R L R L U D L N U L L U L U U R L R U D D D D N R 
+R L D R L R R U D L D R U L D D L L R N R L U N L R U L L U L U D R L D U D L D D U R 
+-
+44
+320,544,P,37 640,640,T 64,64,G,1 480,96,G,2 352,64,G,3 608,224,G,4 256,32,G,5 576,32,G,6 544,64,G,7 96,288,G,8 448,608,G,9 32,64,G,10 544,448,G,11 128,32,G,12 224,288,G,13 256,256,G,14 320,352,G,15 96,640,G,16 384,128,G,17 160,576,G,18 32,160,G,19 544,352,G,20 288,480,G,21 32,384,G,22 416,384,G,23 192,640,G,24 544,32,G,25 160,384,G,26 416,32,G,27 576,544,G,28 352,160,G,29 384,640,G,30 320,544,G,31 640,128,G,32 320,448,G,33 160,608,G,34 256,64,G,35 608,320,G,36 256,480,G,37 320,512,G,38 544,448,G,39 544,384,G,40 640,576,G,41 416,640,G,42 
+-
+20 20
+.........G....G.....
+.S..........G....G..
+....G...............
+.........G......G...
+.....G......G.......
+.........G.......G..
+...GX...X..XXXXX....
+G...X.G.X...G..X..G.
+....X...X.G....X....
+..G.XXXXX..XXXXX..G.
+........X..X...G....
+...G..G.X..X.G......
+.....G..X..XXXXX....
+.G..G...G....G......
+...........G.....G..
+...G...G..G..G......
+.......G............
+...G.......G........
+....G...G......G....
+.G.....G...........T

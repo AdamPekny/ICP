@@ -13,7 +13,6 @@
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QLabel>
-#include <QDebug>
 
 #include "styles.h"
 
