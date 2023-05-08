@@ -8,6 +8,7 @@
 
 #include <QtDebug>
 #include <QGraphicsOpacityEffect>
+#include <QLayout>
 #include <QPropertyAnimation>
 #include <QSequentialAnimationGroup>
 #include <QGraphicsProxyWidget>
@@ -16,12 +17,23 @@
 #include <chrono>
 #include <regex>
 
-Level::Level() :    level_scene(new QGraphicsScene()),
+Level::Level(QWidget* parent) :
+                    QWidget(parent),
+                    level_view(new QGraphicsView(this)),
+                    level_scene(new QGraphicsScene(this->level_view)),
                     pacman(nullptr),
                     game_over(false),
                     replay_mode(false),
                     max_moves(0) {
+    this->level_view->setScene(this->level_scene);
+    this->layout = new QHBoxLayout(this);
+    this->layout->addWidget(this->level_view);
     this->overlay = new LevelOverlay();
+
+    this->level_view->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+    this->level_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->level_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     connect(this->overlay->get_restart_btn(), &QPushButton::clicked, this, &Level::restart_level);
     connect(this->overlay->get_exit_btn(), &QPushButton::clicked, this, [this](){
         this->clear_level();
@@ -93,13 +105,12 @@ Level::Level() :    level_scene(new QGraphicsScene()),
 
 Level::~Level() {
     disconnect();
-    delete this->level_scene;
+    this->level_view->close();
+    delete this->level_view;
     delete this->overlay;
 }
 
 QGraphicsScene *Level::generate_scene() {
-    this->level_scene = new QGraphicsScene();
-
     this->fill_scene(this->level_scene);
 
     return this->level_scene;
@@ -347,8 +358,9 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
 QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
     this->clear_level();
     this->replay_mode = replay;
-    this->level_vector = MapVector();
+    this->level_vector.clear();
     this->level_file = file_path;
+    qDebug() << "Attributes set!";
     std::ifstream file_stream;
     file_stream.open(file_path);
     if (!file_stream.is_open()){
@@ -407,8 +419,11 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
         qDebug() << "Going to map load!";
 
     }
+    qDebug() << "Loading map vector!";
     this->level_vector.load_from_file(file_stream);
     file_stream.close();
+    qDebug() << "Loaded!";
+    qDebug() << "Scene generated!";
     return this->generate_scene();
 }
 

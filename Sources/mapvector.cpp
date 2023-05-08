@@ -93,3 +93,9 @@ std::pair<size_t, size_t> MapVector::get_dimensions() {
     return this->dimensions;
 }
 
+void MapVector::clear() {
+    this->map_vector.clear();
+    this->dimensions = {0, 0};
+    this->key_count = 0;
+}
+
