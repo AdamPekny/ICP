@@ -2,7 +2,6 @@
 // Created by adam on 03/05/23.
 //
 
-#include <QDebug>
 #include <QBrush>
 #include <random>
 #include <QtDebug>
@@ -24,7 +23,7 @@ Path::Path(QPoint coordinates) {
     this->setPen(Qt::NoPen);
 }
 
-Key::Key(QPoint coordinates, Pacman *subject) : subject(subject), collected(false), collection_move(0) {
+Key::Key(QPoint coordinates, Pacman *subject) : collected(false), collection_move(0), subject(subject) {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     this->setPos(coordinates.x(), coordinates.y());
     this->setBrush(QBrush(QImage("resources/textures/key.png").scaled(CELL_SIZE,CELL_SIZE)));
@@ -85,6 +84,7 @@ Target::Target(QPoint coordinates, Pacman *subject) : subject(subject) {
 }
 
 void Target::update(char time_flow) {
+    (void) time_flow;
     if (this->subject->is_replay_mode()) return;
     if (this->subject->keys_collected == this->subject->total_key_count() && collidesWithItem(this->subject)){
         emit this->subject->game_over(true);
@@ -177,7 +177,7 @@ void Ghost::update(char time_flow) {
     auto next_cell = current_map[new_position.y()][new_position.x()];
     if (next_cell != MapVector::Wall && next_cell != MapVector::Target){
         if (!this->subject->is_replay_mode()){
-            this->subject->add_ghost_move(this->index, this->direction);
+            this->subject->add_ghost_move(this->direction);
         }
         this->move_anim->setStartValue(this->pos());
         this->move_anim->setEndValue(QPointF(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE));
@@ -198,7 +198,7 @@ void Ghost::update(char time_flow) {
 
     } else {
         if (!this->subject->is_replay_mode()){
-            this->subject->add_ghost_move(this->index, 'N');
+            this->subject->add_ghost_move('N');
         }
         this->change_direction_random(current_position, this->subject->get_map_vector());
     }

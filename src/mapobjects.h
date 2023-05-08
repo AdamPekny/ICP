@@ -14,14 +14,14 @@
 class Wall : public MapObserverObject {
 public:
     explicit Wall(QPoint coordinates);
-    void update(char time_flow) override {};
+    void update(char time_flow) override { (void) time_flow; };
     std::string export_state_str() override { return "W"; };
 };
 
 class Path : public MapObserverObject {
 public:
     explicit Path(QPoint coordinates);
-    void update(char time_flow) override {};
+    void update(char time_flow) override { (void) time_flow; };
     std::string export_state_str() override { return "P"; };
 };
 

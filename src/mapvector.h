@@ -21,7 +21,7 @@ public:
         Pacman,
         Unknown
     };
-    MapVector() : key_count(0), dimensions({0, 0}) {};
+    MapVector();
 
     static MapVector::MapObjectType char_to_type(char type_label);
     void load_from_file(std::ifstream& s_map_file);

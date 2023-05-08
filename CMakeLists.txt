@@ -12,7 +12,7 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(ICP_pacman src/main.cpp src/pacman.h src/pacman.cpp src/level.h src/level.cpp src/mapvector.h src/mapvector.cpp src/mapobjects.h src/mapobserverobject.h src/mapobjects.cpp src/widgets.cpp src/widgets.h src/leveloverlay.h src/leveloverlay.cpp src/styles.h src/widgets.cpp)
+add_executable(ICP_pacman src/main.cpp src/pacman.h src/pacman.cpp src/level.h src/level.cpp src/mapvector.h src/mapvector.cpp src/mapobjects.h src/mapobserverobject.h src/mapobjects.cpp src/widgets.cpp src/widgets.h src/leveloverlay.h src/leveloverlay.cpp src/styles.h src/widgets.cpp src/gamebar.cpp)
 target_link_libraries(ICP_pacman
         Qt5::Core
         Qt5::Gui

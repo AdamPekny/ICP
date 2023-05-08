@@ -43,7 +43,6 @@ private:
     MapVector level_vector;
     std::vector<std::vector<char>> game_moves;
     std::vector<std::pair<QPoint, std::string>> observers_end_states;
-    size_t max_moves;
     Pacman *pacman;
     bool game_over;
     LevelOverlay *overlay;

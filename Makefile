@@ -5,7 +5,7 @@ build:
 	cd build && qmake ../src && make -j 16
 	cp build/duckman .
 
-run:
+run: build
 	./duckman
 
 clean:
