@@ -1,0 +1,91 @@
+R R R N N 
+R R N U U 
+R R L U U 
+R U L D U 
+R D N D U 
+R D D N U 
+R D N U U 
+N U R R D 
+N U R R D 
+L U U R D 
+D N D R D 
+D L N D D 
+D L U N D 
+U L U U N 
+U L D N U 
+U L D D U 
+R D N N U 
+R D L R U 
+R U L N U 
+R U N L U 
+R N U N U 
+R D U U U 
+R D N N U 
+L N R R L 
+L L R R L 
+L N N U N 
+L U L U D 
+D U L N D 
+D N N L N 
+N D D L L 
+L D D N L 
+D D N U N 
+D N U U U 
+L U D N L 
+L U N L N 
+U U R L R 
+U N R L N 
+L D N L D 
+L D L D D 
+L D L U D 
+L N U U D 
+N U U U N 
+D U R U R 
+D U R D N 
+D N N D L 
+D D L U L 
+D D L U N 
+R R N U R 
+D N D U R 
+D U D U N 
+D U N U L 
+R N U U L 
+R R R U N 
+D R R N R 
+R L N R R 
+D L U R N 
+D L N R D 
+L N L R N 
+L D L R R 
+L D R L R 
+L D D L R 
+L N D L N 
+R U D L D 
+R U U L D 
+R D U D D 
+R R R D U 
+R N N D U 
+R U U D U 
+R U D D U 
+D N D U U 
+R R N U U 
+-
+9
+320,480,P,71 448,32,K,1,22 256,160,K,1,33 64,448,K,1,61 320,480,T 224,160,G,1 288,320,G,2 32,128,G,3 480,288,G,4 
+-
+15 15
+S............K.
+.XX.XX.XX.XX...
+.X.....X....X..
+.X.XXX.X.XX.X..
+...X...K...X...
+.X.X...G...X...
+.X.X..XXX..X...
+.X...X...X...X.
+.XX.XX.G.X.XX..
+.....X...X.....
+.XX...X.X...XX.
+...X......X....
+.XXXXX...XXXXX.
+.K.............
+GXXX..X..TXX.XG

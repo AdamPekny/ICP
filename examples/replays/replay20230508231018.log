@@ -1,0 +1,32 @@
+R R N 
+R R U 
+R R D 
+R R U 
+R N N 
+R D R 
+R D R 
+R D D 
+U U U 
+U U U 
+U D U 
+U D U 
+R D U 
+U D N 
+U N R 
+U L N 
+U L D 
+-
+5
+320,32,P,17 320,32,T 288,256,K,1,8 256,320,G,1 288,64,G,2 
+-
+10 10
+.........T
+XX...XX...
+X.........
+XXXXXXX...
+....XG....
+XX..XGX...
+....XXX...
+XX...XX.K.
+S.........
+XX...XX...
