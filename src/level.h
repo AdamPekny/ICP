@@ -21,7 +21,8 @@
 /**
  * @brief Widget that displays the single level / game of pacman
  *
- * Here will be long comment
+ * Widget responsible for holding scene and view of level and providing an interface to provide needed data
+ * to other components.
  */
 class Level : public QWidget {
     Q_OBJECT
