@@ -7,18 +7,21 @@
 #include "widgets.h"
 
 Menu::Menu(QWidget *parent) : QWidget(parent) {
+    // Initialize buttons and their values
     this->button1 = new QPushButton("Play", this);
     this->button2 = new QPushButton("Load a map", this);
     this->button3 = new QPushButton("Watch replay", this);
     this->button4 = new QPushButton("Controls", this);
     this->button5 = new QPushButton("Exit", this);
 
+    // Add styles to the buttons
     this->button1->setStyleSheet(BUTTON_STYLE);
     this->button2->setStyleSheet(BUTTON_STYLE);
     this->button3->setStyleSheet(BUTTON_STYLE);
     this->button4->setStyleSheet(BUTTON_STYLE);
     this->button5->setStyleSheet(BUTTON_STYLE);
 
+    // Create vertical layout to style the buttons below each other
     QVBoxLayout *vLayout = new QVBoxLayout();
     vLayout->addWidget(button1);
     vLayout->addWidget(button2);
@@ -26,6 +29,7 @@ Menu::Menu(QWidget *parent) : QWidget(parent) {
     vLayout->addWidget(button4);
     vLayout->addWidget(button5);
 
+    // Create horizontal layout to style the content to the center
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     hLayout->addStretch();
     hLayout->addLayout(vLayout);
@@ -36,6 +40,7 @@ Menu::Menu(QWidget *parent) : QWidget(parent) {
 
 
 ControlsWidget::ControlsWidget(QWidget *parent) : QWidget(parent) {
+    // Initialize button that return to the main menu with its value and set its style
     this->button_back = new QPushButton("Back to Menu", this);
     this->button_back->setStyleSheet(BUTTON_STYLE);
 
@@ -62,7 +67,7 @@ ControlsWidget::ControlsWidget(QWidget *parent) : QWidget(parent) {
     QLabel *label_restart_replay_start = new QLabel("Restart to start: <b>S</b>", this);
     QLabel *label_restart_replay_end = new QLabel("Restart to end: <b>B</b>", this);
 
-    // Create a vertical layout for the controls
+    // Create the vertical layouts for the controls and add the labels to them
     QVBoxLayout *vLayout = new QVBoxLayout();
     QHBoxLayout *hLayout = new QHBoxLayout();
     QVBoxLayout *vLayout1 = new QVBoxLayout();
@@ -105,23 +110,28 @@ ControlsWidget::ControlsWidget(QWidget *parent) : QWidget(parent) {
 
     setLayout(hLayout2);
 
+    // Set the styles of the labels with the controls / hotkeys information
     setStyleSheet(NORMAL_TEXT_STYLE);
 }
 
 SelectMap::SelectMap(QWidget *parent) : QWidget(parent) {
+    // Initialize the buttons with their values
     this->button1 = new QPushButton("EASY", this);
     this->button2 = new QPushButton("MEDIUM", this);
     this->button3 = new QPushButton("INSANE", this);
 
+    // Set the styles to the buttons
     this->button1->setStyleSheet(BUTTON_STYLE);
     this->button2->setStyleSheet(BUTTON_STYLE);
     this->button3->setStyleSheet(BUTTON_STYLE);
 
+    // Create vertical layout to display the buttons below each other
     QVBoxLayout *vLayout = new QVBoxLayout();
     vLayout->addWidget(button1);
     vLayout->addWidget(button2);
     vLayout->addWidget(button3);
 
+    // Create horizontal layout to display the content in the center
     QHBoxLayout *hLayout = new QHBoxLayout(this);
     hLayout->addStretch();
     hLayout->addLayout(vLayout);

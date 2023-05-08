@@ -15,12 +15,11 @@
 #include <QStackedWidget>
 #include <functional>
 
-
 #include "level.h"
 #include "widgets.h"
 
 /**
- * @brief Class that represents the window of the application
+ * @brief Class that represents the window of the application.
  */
 class MainWindow : public QMainWindow {
 private:
@@ -32,41 +31,65 @@ private:
 
 public:
     /**
-     * @breif Construct the MainWindow object
+     * @brief Construct the MainWindow object.
      * @param parent Parent widget
      */
     explicit MainWindow(QWidget *parent = nullptr);
 
     /**
-     * @brief Destructor of the MainWindow object
+     * @brief Destructor of the MainWindow object.
      */
     ~MainWindow() override;
 
     /**
-     * @brief Handling of the key press events
+     * @brief Handling of the key press events.
      * @param event Pointer to the QKeyEvent object containing the details of the key event
      */
     void keyPressEvent(QKeyEvent *event) override;
 
     /**
-     * @brief Method that
-     * @param replay
+     * @brief Load the map from the device.
+     * @param replay Flag that indicates if it is for replay mode
      */
     void load_map(bool replay);
+
+    /**
+     * @brief Set menu as the current main widget.
+     */
     void display_menu();
+
+    /**
+     * @brief Set select_map as the current main widget.
+     */
     void display_map_selection();
+
+    /**
+     * @brief Set controls_widget as the current main widget.
+     */
     void display_controls_widget();
+
+    /**
+     * @brief Set level as the current main widget.
+     * @param file_path Path to the file containing the map / level
+     * @param replay Flag that indicates if the replay_mode is active
+     */
     void display_level(const std::string& file_path, bool replay);
+
+    /**
+     * @brief Method that exits the program.
+     */
     static void exit_app();
 
 };
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    // Initialize the main widgets
     this->level = new Level(this);
     this->menu = new Menu(this);
     this->controls_widget = new ControlsWidget(this);
     this->select_map = new SelectMap(this);
 
+    // Initialize the QStackedWidget and add to it the main widgets
     this->app_main_widgets = new QStackedWidget(this);
     this->app_main_widgets->addWidget(this->level);
     this->app_main_widgets->addWidget(this->menu);
@@ -117,7 +140,8 @@ void MainWindow::display_level(const std::string& file_path, bool replay) {
 }
 
 void MainWindow::load_map(bool replay) {
-    std::string directory = "resources/";
+    std::string directory = "resources/"; // begining of the default directory
+    // if the replay mode is active, set the default directory to resources/replays, else to resources/maps
     directory += (replay ? "replays" : "maps");
     QString file_path = QFileDialog::getOpenFileName(this, "Select a map file", directory.c_str(), "");
     if (file_path.isEmpty()) {
@@ -145,6 +169,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
+    // Add the custom font do the database with fonts
     QFontDatabase::addApplicationFont("resources/font/VT323-Regular.ttf");
 
     MainWindow main_window(nullptr);

@@ -1,6 +1,8 @@
-//
-// Created by adam on 03/05/23.
-//
+/**
+ * @file mapobjects.cpp
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
+ * @brief Implementation of Wall, Path, Key, Target and Ghost classes that represents the objects in the game
+ */
 
 #include <QBrush>
 #include <random>
