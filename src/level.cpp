@@ -34,12 +34,16 @@ Level::Level(QWidget* parent) :
     this->layout->addWidget(this->game_bar);
     this->overlay = new LevelOverlay();
 
+    this->i_overlay = new InfoOverlay();
+
     this->level_view->setFocusPolicy(Qt::FocusPolicy::NoFocus);
     this->level_view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->level_view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     connect(this->overlay->get_restart_btn(), &QPushButton::clicked, this, &Level::restart_level);
     connect(this->overlay->get_exit_btn(), &QPushButton::clicked, this, [this](){
+        this->game_moves.clear();
+        this->observers_end_states.clear();
         this->clear_level();
         emit this->exit_level();
     });
@@ -121,6 +125,13 @@ QGraphicsScene *Level::generate_scene() {
 }
 
 void Level::handle_key_press(QKeyEvent *event) {
+    if (!this->game_started){
+        this->game_started = true;
+        this->level_scene->removeItem(this->i_overlay);
+        this->pacman->game_start();
+        return;
+    }
+
     if (!this->replay_mode){
         switch (event->key()) {
             case Qt::Key_W:
@@ -299,6 +310,9 @@ void Level::fill_scene(QGraphicsScene *scene) {
             (qreal) (this->level_vector.get_dimensions().first + 2) * CELL_SIZE
     );
     this->level_view->setAlignment(Qt::AlignCenter);
+
+    this->i_overlay->setup_overlay(this->level_scene, "Press any button to start!", Qt::white);
+    this->level_scene->addItem(this->i_overlay);
 }
 
 void Level::fill_scene_end(QGraphicsScene *scene) {
@@ -382,6 +396,9 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
             (qreal) (this->level_vector.get_dimensions().first + 2) * CELL_SIZE
     );
     this->level_view->setAlignment(Qt::AlignCenter);
+
+    this->i_overlay->setup_overlay(this->level_scene, "Press any button to start!", Qt::white);
+    this->level_scene->addItem(this->i_overlay);
 }
 
 QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
@@ -450,12 +467,16 @@ QGraphicsScene *Level::load_level(const std::string& file_path, bool replay) {
 }
 
 void Level::clear_level() {
+    this->game_started = false;
     if (!this->replay_mode){
         this->game_moves.clear();
     }
     if (this->level_scene != nullptr){
         if (this->level_scene->items().contains(this->overlay)){
             this->level_scene->removeItem(this->overlay);
+        }
+        if (this->level_scene->items().contains(this->i_overlay)){
+            this->level_scene->removeItem(this->i_overlay);
         }
         this->level_scene->clear();
         this->pacman = nullptr;

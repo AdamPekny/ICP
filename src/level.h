@@ -14,6 +14,7 @@
 
 #include "mapvector.h"
 #include "leveloverlay.h"
+#include "infooverlay.h"
 #include "pacman.h"
 #include "gamebar.h"
 
@@ -81,11 +82,14 @@ private:
     std::vector<std::vector<char>> game_moves;
     std::vector<std::pair<QPoint, std::string>> observers_end_states;
     bool game_over;
+    LevelOverlay *overlay;
+    InfoOverlay *i_overlay;
     bool replay_mode;
     Pacman *pacman;
     LevelOverlay *overlay;
     MapVector level_vector;
     GameBar *game_bar;
+    bool game_started = false;
 
     void fill_scene(QGraphicsScene *scene);
     void fill_scene_end(QGraphicsScene *scene);
