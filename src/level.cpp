@@ -31,6 +31,7 @@ Level::Level(QWidget* parent) :
     this->level_view->setStyleSheet("background-color: transparent;");
     this->layout->addWidget(this->game_bar);
     this->layout->addWidget(this->level_view);
+    this->layout->addWidget(this->game_bar);
     this->overlay = new LevelOverlay();
 
     this->level_view->setFocusPolicy(Qt::FocusPolicy::NoFocus);
