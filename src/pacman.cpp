@@ -1,6 +1,8 @@
-//
-// Created by adam on 28/04/23.
-//
+/**
+ * @file pacman.cpp
+ * @author Adam Pekný (xpekny00), Samuel Slávik (xslavi37)
+ * @brief Implementation of pacman class representing player
+ */
 
 #include <QBrush>
 #include <QtDebug>
@@ -19,7 +21,8 @@ Pacman::Pacman(MapVector map_vector, std::vector<std::vector<char>> *moves, bool
         direction('R'),
         move_timer(new QTimer()),
         game_ended(false),
-        replay_mode(replay) {
+        replay_mode(replay),
+        position({0, 0}) {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
@@ -85,6 +88,7 @@ void Pacman::move() {
             break;
     }
 
+    this->position = new_position;
     if (current_map[new_position.y()][new_position.x()] != MapVector::Wall){
         if (!this->replay_mode) {
             this->game_moves->push_back({this->direction});
