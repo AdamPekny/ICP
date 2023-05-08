@@ -16,17 +16,19 @@
 #include <regex>
 
 Level::Level(QWidget* parent) :
-QWidget(parent),
-level_view(new QGraphicsView(this)),
-level_scene(new QGraphicsScene(this->level_view)),
-pacman(nullptr),
-game_over(false),
-replay_mode(false) {
+        QWidget(parent),
+        level_view(new QGraphicsView(this)),
+        level_scene(new QGraphicsScene(this->level_view)),
+        pacman(nullptr),
+        game_over(false),
+        replay_mode(false) {
     this->level_view->setScene(this->level_scene);
     this->game_bar = new GameBar();
     this->level_view->setSceneRect(this->level_scene->itemsBoundingRect());
     this->level_view->setAlignment(Qt::AlignCenter);
-    this->layout = new QHBoxLayout(this);
+    this->layout = new QVBoxLayout(this);
+    this->level_view->setStyleSheet("background-color: transparent;");
+    this->layout->addWidget(this->game_bar);
     this->layout->addWidget(this->level_view);
     this->overlay = new LevelOverlay();
 
@@ -224,11 +226,14 @@ void Level::restart_level() {
     } else {
         this->fill_scene(this->level_scene);
     }
+    game_bar->set_moves(this->pacman->get_move_count(), this->replay_mode ? this->game_moves.size() : 0);
+    game_bar->set_keys_collected(this->pacman->get_collected_keys_count());
 }
 
 void Level::fill_scene(QGraphicsScene *scene) {
     this->pacman = new Pacman(this->level_vector, &this->game_moves, this->replay_mode);
     connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
+    connect(this->pacman, &Pacman::pacman_move_over, this, [this](){on_pacman_move_over();});
 
     int x = 0, y = 0;
     QPoint start_pos = {0, 0};
@@ -298,6 +303,7 @@ void Level::fill_scene(QGraphicsScene *scene) {
 void Level::fill_scene_end(QGraphicsScene *scene) {
     this->pacman = new Pacman(this->level_vector, &this->game_moves, this->replay_mode);
     connect(this->pacman, &Pacman::game_over, this, &Level::handle_game_over);
+    connect(this->pacman, &Pacman::pacman_move_over, this, [this](){on_pacman_move_over();});
 
     int x = 0, y = 0;
     Target *target = nullptr;
@@ -318,9 +324,9 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
                 case MapVector::MapObjectType::Key:
                     key = new Key(QPoint(x, y), pacman);
                     key->set_from_state_str(
-                        std::find_if(this->observers_end_states.begin(), this->observers_end_states.end(), [x,y](auto &item){
-                            return item.second[0] == 'K' && item.first == QPoint(x, y);
-                        })->second
+                            std::find_if(this->observers_end_states.begin(), this->observers_end_states.end(), [x,y](auto &item){
+                                return item.second[0] == 'K' && item.first == QPoint(x, y);
+                            })->second
                     );
                     pacman->attach_observer(key);
                     scene->addItem(key);
@@ -346,7 +352,7 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
     pacman->setPos(pacman_end_state->first);
     char *endptr = nullptr;
     pacman->set_move_count(
-    std::strtoul(pacman_end_state->second.substr(2, pacman_end_state->second.length() - 2).c_str(), &endptr, 10)
+            std::strtoul(pacman_end_state->second.substr(2, pacman_end_state->second.length() - 2).c_str(), &endptr, 10)
     );
     if (*endptr != '\0'){
         throw Level::SceneGenerationException();
@@ -369,10 +375,10 @@ void Level::fill_scene_end(QGraphicsScene *scene) {
     }
 
     this->level_scene->setSceneRect(
-        0,
-        0,
-        (qreal) (this->level_vector.get_dimensions().second + 2) * CELL_SIZE,
-        (qreal) (this->level_vector.get_dimensions().first + 2) * CELL_SIZE
+            0,
+            0,
+            (qreal) (this->level_vector.get_dimensions().second + 2) * CELL_SIZE,
+            (qreal) (this->level_vector.get_dimensions().first + 2) * CELL_SIZE
     );
     this->level_view->setAlignment(Qt::AlignCenter);
 }
@@ -482,4 +488,9 @@ void Level::load_game_moves(std::ifstream &file_stream) {
     if (file_stream.eof()) {
         throw MapVector::OpenFileException();
     }
+}
+
+void Level::on_pacman_move_over() {
+    game_bar->set_moves(this->pacman->get_move_count(), this->replay_mode ? this->game_moves.size() : 0);
+    game_bar->set_keys_collected(this->pacman->get_collected_keys_count());
 }

@@ -45,5 +45,5 @@
 
 #define NORMAL_TEXT_STYLE "QLabel { \
                         font-family: 'VT323'; \
-                        font-size: 20px; \
+                        font-size: 30px; \
                     }"

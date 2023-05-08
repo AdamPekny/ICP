@@ -11,15 +11,15 @@
 
 
 Pacman::Pacman(MapVector map_vector, std::vector<std::vector<char>> *moves, bool replay) :
-keys_collected(0),
-replay_time_flow('F'),
-move_count(0),
-game_moves(moves),
-map_vector(std::move(map_vector)),
-direction('R'),
-move_timer(new QTimer()),
-game_ended(false),
-replay_mode(replay) {
+        keys_collected(0),
+        replay_time_flow('F'),
+        move_count(0),
+        game_moves(moves),
+        map_vector(std::move(map_vector)),
+        direction('R'),
+        move_timer(new QTimer()),
+        game_ended(false),
+        replay_mode(replay) {
     this->setRect(0, 0, CELL_SIZE, CELL_SIZE);
     connect(this->move_timer, SIGNAL(timeout()), this, SLOT(move()));
     connect(this, &Pacman::game_over, this, &Pacman::handle_game_over);
@@ -230,6 +230,9 @@ std::vector<std::vector<char>> *Pacman::get_game_moves() {
 
 size_t Pacman::get_move_count() const {
     return this->move_count;
+}
+size_t Pacman::get_collected_keys_count() {
+    return this->keys_collected;
 }
 
 bool Pacman::is_replay_mode() const {

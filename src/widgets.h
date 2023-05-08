@@ -5,7 +5,8 @@
 #include <QListWidget>
 #include <QLabel>
 
-#include "../Headers/config.h"
+#include "config.h"
+#include "styles.h"
 
 class Menu : public QWidget {
 private:
@@ -14,6 +15,7 @@ public:
     QPushButton *button2;
     QPushButton *button3;
     QPushButton *button4;
+    QPushButton *button5;
     explicit Menu(QWidget *parent = nullptr);
 };
 
