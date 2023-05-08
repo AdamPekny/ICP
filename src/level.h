@@ -12,6 +12,7 @@
 
 #include "mapvector.h"
 #include "leveloverlay.h"
+#include "infooverlay.h"
 #include "pacman.h"
 #include "gamebar.h"
 
@@ -30,7 +31,7 @@ public:
             void exit_level();
 
 public slots:
-            void handle_game_over(bool win);
+    void handle_game_over(bool win);
     void restart_level();
     void clear_level();
 
@@ -46,8 +47,10 @@ private:
     Pacman *pacman;
     bool game_over;
     LevelOverlay *overlay;
+    InfoOverlay *i_overlay;
     bool replay_mode;
     GameBar *game_bar;
+    bool game_started = false;
 
     void fill_scene(QGraphicsScene *scene);
     void fill_scene_end(QGraphicsScene *scene);

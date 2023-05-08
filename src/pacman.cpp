@@ -140,7 +140,6 @@ void Pacman::game_start() {
 
 void Pacman::handle_game_over(bool win) {
     (void) win;
-    this->move_anim->stop();
     this->game_ended = true;
     this->game_stop();
 }

@@ -109,13 +109,14 @@ Ghost::Ghost(QPoint coordinates, size_t index, Pacman *subject) : subject(subjec
     this->move_anim->setDuration(100);
     connect(this->move_anim, &QVariantAnimation::valueChanged, [this](const QVariant &value) {
         this->setPos(value.toPointF());  // set the new position of rect1
-    });
-
-    connect(this->move_anim, &QVariantAnimation::finished, this, [this]() {
-        if (collidesWithItem(this->subject) && !this->subject->is_replay_mode()){
-            this->move_anim->stop();
-            emit this->subject->game_over(false);
-            return;
+        if (!this->subject->is_replay_mode()){
+            if (
+                abs(this->pos().x() - this->subject->pos().x()) < CELL_SIZE / 2.0 &&
+                abs(this->pos().y() - this->subject->pos().y()) < CELL_SIZE / 2.0
+            ){
+                emit this->subject->game_over(false);
+                return;
+            }
         }
     });
 }
@@ -175,15 +176,13 @@ void Ghost::update(char time_flow) {
     }
 
     auto next_cell = current_map[new_position.y()][new_position.x()];
+
     if (next_cell != MapVector::Wall && next_cell != MapVector::Target){
         if (!this->subject->is_replay_mode()){
             this->subject->add_ghost_move(this->direction);
         }
         this->move_anim->setStartValue(this->pos());
         this->move_anim->setEndValue(QPointF(new_position.x() * CELL_SIZE, new_position.y() * CELL_SIZE));
-        if (collidesWithItem(this->subject) && !this->subject->is_replay_mode()){
-            emit this->subject->game_over(false);
-        }
         this->move_anim->start();
 
         std::random_device random_device;
@@ -199,6 +198,10 @@ void Ghost::update(char time_flow) {
     } else {
         if (!this->subject->is_replay_mode()){
             this->subject->add_ghost_move('N');
+            if (collidesWithItem(this->subject)){
+                emit this->subject->game_over(false);
+                return;
+            }
         }
         this->change_direction_random(current_position, this->subject->get_map_vector());
     }
