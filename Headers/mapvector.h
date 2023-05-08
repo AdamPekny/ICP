@@ -28,6 +28,7 @@ public:
     std::vector<std::vector<MapVector::MapObjectType>> get_vector() const;
     size_t get_key_count() const;
     std::pair<size_t, size_t> get_dimensions();
+    void clear();
 
     class OpenFileException : std::exception {};
     class FileFormatException : std::exception {};

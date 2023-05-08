@@ -8,16 +8,17 @@
 #include <QGraphicsScene>
 #include <QObject>
 #include <string>
+#include <QHBoxLayout>
 
 #include "../Headers/mapvector.h"
 #include "../Headers/leveloverlay.h"
 #include "pacman.h"
 
 
-class Level : public QObject {
+class Level : public QWidget {
     Q_OBJECT
 public:
-    explicit Level();
+    explicit Level(QWidget* parent = nullptr);
     ~Level() override;
     bool key_handle_ready();
     void handle_key_press(QKeyEvent *event);
@@ -35,12 +36,14 @@ public slots:
 
 
 private:
+    QGraphicsView *level_view;
+    QGraphicsScene *level_scene;
+    QHBoxLayout *layout;
     std::string level_file;
     MapVector level_vector;
     std::vector<std::vector<char>> game_moves;
     std::vector<std::pair<QPoint, std::string>> observers_end_states;
     size_t max_moves;
-    QGraphicsScene *level_scene;
     Pacman *pacman;
     bool game_over;
     LevelOverlay *overlay;
